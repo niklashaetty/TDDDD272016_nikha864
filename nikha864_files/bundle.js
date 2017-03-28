@@ -8913,9 +8913,9 @@
 
 	  // Remove webpack-specific loader notation from filename.
 	  // Before:
-	  // ./~/css-loader!./~/postcss-loader!./src/home.css
+	  // ./~/css-loader!./~/postcss-loader!./src/header.css
 	  // After:
-	  // ./src/home.css
+	  // ./src/header.css
 	  if (lines[0].lastIndexOf('!') !== -1) {
 	    lines[0] = lines[0].substr(lines[0].lastIndexOf('!') + 1);
 	  }
@@ -32964,7 +32964,7 @@
 /***/ },
 /* 276 */
 /*!******************************!*\
-  !*** ./src/Header/home.js ***!
+  !*** ./src/Header/header.js ***!
   \******************************/
 /***/ function(module, exports, __webpack_require__) {
 
@@ -32973,7 +32973,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	var _jsxFileName = '/home/iinh/git/tddd27/src/Header/home.js';
+	var _jsxFileName = '/home/iinh/git/tddd27/src/Header/header.js';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -32985,7 +32985,7 @@
 
 	var _logo2 = _interopRequireDefault(_logo);
 
-	__webpack_require__(/*! ./home.css */ 278);
+	__webpack_require__(/*! ./header.css */ 278);
 
 	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 280);
 
@@ -33082,14 +33082,14 @@
 /***/ },
 /* 278 */
 /*!*******************************!*\
-  !*** ./src/Header/home.css ***!
+  !*** ./src/Header/header.css ***!
   \*******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./home.css */ 279);
+	var content = __webpack_require__(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./header.css */ 279);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ../../~/style-loader/addStyles.js */ 267)(content, {});
@@ -33098,8 +33098,8 @@
 	if(true) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./home.css */ 279, function() {
-				var newContent = __webpack_require__(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./home.css */ 279);
+			module.hot.accept(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./header.css */ 279, function() {
+				var newContent = __webpack_require__(/*! !../../~/css-loader?importLoaders=1!../../~/postcss-loader!./header.css */ 279);
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -33111,7 +33111,7 @@
 /***/ },
 /* 279 */
 /*!*********************************************************************************!*\
-  !*** ./~/css-loader?importLoaders=1!./~/postcss-loader!./src/Header/home.css ***!
+  !*** ./~/css-loader?importLoaders=1!./~/postcss-loader!./src/Header/header.css ***!
   \*********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
