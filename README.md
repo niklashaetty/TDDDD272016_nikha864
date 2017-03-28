@@ -1,4 +1,6 @@
 # [project name] - TDDD27 Advanced web programming
+[Click here to get to up-to-date deployment](https://tddd27-nikha864.herokuapp.com/)
+
 [project name] is a webbapplication that lets you create you own course plan for your masters program. Lets you visualize your course plan, complete with requirements for graduation, potential schedule conflict.
 
 ## Project identity
@@ -18,7 +20,7 @@ Niklas Hätty - nikha864@student.liu.se
 The following tools will be used in the project
 * [React](https://facebook.github.io/react/) - Front end library
 * [Flask](http://flask.pocoo.org/) - Back end framework (more like back end api)
-* [Heroku] (https://www.heroku.com) - Deployment
+* [Heroku](https://www.heroku.com) - Deployment
 * [PosgreSQL](https://www.postgresql.org/) - Database (hosted on Heroku)
 
 ## Extra tools
