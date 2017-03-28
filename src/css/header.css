@@ -1,16 +1,16 @@
 .header{
   height: 50px;
   width: 100%;
-  background-color: #EFF4FF;
+  background-color: #545a6a;
   position: fixed;
-  border-bottom: 1px solid #BACEFF;
+  border-bottom: 1px solid #fff;
 }
 
 .logo_text{
   margin-top: 12px;
   float: left;
   font-size: 20px;
-  color: #555;
+  color: #fff;
   font-family: 'Alegreya Sans';
 }
 
@@ -20,14 +20,14 @@
 }
 
 .menu_item{
-  color: #595959;
+  color: #fff;
   float: left;
   font-size: 14px;
 }
 
 a, a:visited{
   text-decoration: none;
-  color: #595959
+  color: #fff;
 }
 
 .v_divider {
