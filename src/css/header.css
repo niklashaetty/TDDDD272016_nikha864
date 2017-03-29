@@ -12,6 +12,7 @@
   font-size: 20px;
   color: #fff;
   font-family: 'Alegreya Sans';
+  cursor:pointer;
 }
 
 .menu_right{
@@ -40,10 +41,11 @@ a, a:visited{
 }
 
 
-.App-logo {
+.logo {
   animation: App-logo-spin infinite 20s linear;
   height: 50px;
   float: left;
+  cursor:pointer;
 }
 
 @keyframes App-logo-spin {

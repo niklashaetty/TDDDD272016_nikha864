@@ -1,15 +1,17 @@
+/* Components related to the home page such as the register and login forms */
+
 import React, { Component } from 'react';
 import '../css/header.css';
 import '../css/home.css';
 import Header from './header';
 
+// Register form on home page
 class RegisterForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.state = {hidden: false};
 	}
-
 
 	handleSubmit(event) {
 		alert('A name was submitted: ' + this.state.value);
@@ -48,6 +50,7 @@ class RegisterForm extends React.Component {
 	}
 }
 
+// Login form on home page
 class LoginForm extends React.Component {
 	constructor(props) {
 		super(props);
@@ -86,6 +89,7 @@ class LoginForm extends React.Component {
 	}
 }
 
+// Render home page when not logged in
 class Home extends Component {
 	constructor(props) {
 		super(props);
