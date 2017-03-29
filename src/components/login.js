@@ -5,7 +5,7 @@ class Login extends Component {
 	render() {
 		return (
       <p className="login">
-				LOGIN
+				This is the page of user: {this.props.params.id}
       </p>
 		);
 	}
