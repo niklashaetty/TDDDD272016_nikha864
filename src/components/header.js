@@ -11,9 +11,6 @@ class Header extends Component {
 			<div className="header">
 				<img src={logo} className="App-logo" alt="logo" />
 				<div className="logo_text"> Project Name</div>
-				<div className="menu_right">
-					<p className="menu_item"><Link to="/login" ><FontAwesome name="user-o"/> Login</Link></p>
-				</div>
 			</div>
 		);
 	}
