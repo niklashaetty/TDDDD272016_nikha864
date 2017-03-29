@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import '../css/header.css';
-import '../css/home.css'
+import '../css/home.css';
 import Header from './header';
-//import RegisterForm from './registerForm';
-//import LoginForm from './loginForm';
 
 class RegisterForm extends React.Component {
 	constructor(props) {
@@ -95,14 +93,12 @@ class Home extends Component {
 	}
 
 	handleSwap = () =>{
-		console.log("test");
 		this.setState({showSignup : !this.state.showSignup});
 	}
 
 	render() {
 		let display = null;
 		const showSignup = this.state.showSignup;
-		console.log(showSignup);
 		if(showSignup){
 			display = <RegisterForm />
 		}
