@@ -1,9 +1,42 @@
 /* Components related to the home page such as the register and login forms */
 
 import React, { Component } from 'react';
+import FontAwesome from 'react-fontawesome';
 import '../css/header.css';
 import '../css/home.css';
+import '../index.css';
 import Header from './header';
+
+// Show the result of a form, i.e feedback from registration
+class FormResult extends React.Component {
+  render() {
+    let style;
+    let displayIcon;
+    if(this.props.hidden){
+      style = {
+        display: 'none'
+      }
+    }
+    else if(this.props.positive){
+      style = {
+        display: 'block'
+      }
+      displayIcon = <FontAwesome name="check" style={{color:'green'}}/>
+
+    }
+    else {
+      style = {
+        display: 'block'
+      }
+      displayIcon = <FontAwesome style={{color: '#ED4337'}} name="exclamation-circle"/>
+    }
+    return (
+      <div className="feedback_wrapper" style={style}>
+        {displayIcon} {this.props.message}
+      </div>
+    );
+  }
+}
 
 // Register form on home page
 class RegisterForm extends React.Component {
@@ -14,8 +47,12 @@ class RegisterForm extends React.Component {
       username: '',
       password: '',
       confirmPassword: '',
+      hideResponse: true,
+      responseMessage: '',
+      positiveResponse: null
     };
   }
+
 
   handleChange = (event) =>{
     const target = event.target;
@@ -36,7 +73,12 @@ class RegisterForm extends React.Component {
   async handleSubmit (event)  {
     event.preventDefault();
     let res = await this.search(this.state.username);
+    let res2 = await this.register();
+    console.log(res2.message);
     console.log(res.username);
+    this.setState({hideResponse: false,
+                  responseMessage: res2.message,
+                  positiveResponse: res2.success});
     this.resetForm();
   }
 
@@ -44,6 +86,18 @@ class RegisterForm extends React.Component {
     const response = await fetch(`api/users?q=${query}`);
     return await response.json();
 
+  }
+
+  // Send register request to server
+  async register(){
+    let payload = new FormData();
+    payload.append("username", this.state.username);
+    payload.append("password", this.state.password);
+    const response = await fetch('/register', {
+      method: 'post',
+      body: payload
+    });
+    return await response.json();
   }
 
   render() {
@@ -79,6 +133,7 @@ class RegisterForm extends React.Component {
           </div>
           <button className="submit">Submit</button>
         </form>
+        <FormResult hidden={this.state.hideResponse} positive={this.state.positiveResponse} message={this.state.responseMessage}/>
       </div>
     );
   }

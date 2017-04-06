@@ -1,3 +1,4 @@
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 .signup_wrapper{
   width: 400px;
   height: 500px;
@@ -62,4 +63,14 @@ input{
   border:none;
   font-size: 16px;
   cursor:pointer;
+}
+
+.feedback_wrapper{
+  text-align: center;
+  font-size: 15px;
+  font-family: 'Alegreya Sans';
+  color: #727272;
+  padding-top: 15px;
+
+
 }
