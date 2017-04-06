@@ -8,7 +8,8 @@ import configparser
 import psycopg2
 import os
 
-from itsdangerous import TimedSerializer
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 
 
 def load_config():
@@ -57,9 +58,22 @@ class User:
     The user of the application
     """
 
+    TWO_HOURS = 7200
+
     def __init__(self, username, password_hash):
         self.username = username
         self.password_hash = password_hash
+
+    def retrieve_hash(self):
+        conn = connect()
+        cur = conn.cursor()
+        query = 'select password_hash from users where username=%'
+        try:
+            cur.execute(query, (self.username, ))
+            return cur.fetchone()[0]
+        except Exception as e:
+            print(e)
+            return False
 
     @staticmethod
     def create_user(username, password_hash):
@@ -76,17 +90,37 @@ class User:
             print(e)
             return False
 
-    def issue_token(self):
+    def issue_token(self, expiration=TWO_HOURS):
         """
         Generate a token with timestamp
         """
         cfg = load_config()
         secret_key = cfg['keys']['secret_key']
-        s = TimedSerializer(secret_key)
+        s = Serializer(secret_key, expires_in=expiration)
         token = s.dumps({'username': self.username})
+        print('issuing token:', token)
         return token
 
         # s.loads(token, max_age=3600)
+
+    @staticmethod
+    def get_user(username):
+        """
+        Retrieves the user with the provided email.
+        """
+        conn = connect()
+        cur = conn.cursor()
+        query = 'select username, password_hash from users where username=%s'
+        try:
+            cur.execute(query, (username,))
+            user_info = cur.fetchone()
+            if not user_info:
+                return None
+            else:
+                return User(user_info[0], bytes(user_info[1]))
+        except Exception as e:
+            print(e)
+            return None
 
     @staticmethod
     def user_exists(username):
@@ -106,50 +140,54 @@ class User:
             return None
 
 
-def is_valid_token(username, token, max_age):
-    """
-    Check if a token exists and is valid
-    :param max_age: in seconds
-    :return: 
-    """
-    # Load serializer
-    cfg = load_config()
-    secret_key = cfg['keys']['secret_key']
-    s = TimedSerializer(secret_key)
+class Token:
 
-    # Query to database
-    conn = connect()
-    cur = conn.cursor()
-    query = 'select token from tokens' \
-            'where username=%s and token=%s'
-    cur.execute(query, (username, token))
-    token = cur.fetch_one()
+    def __init__(self, username, token):
+        self.username = username
+        self.token = token
 
-    # Token exists
-    if token is not None:
+    def add_token_to_database(self):
+        """
+        Add a token to the database
+        """
+        conn = connect()
+        cur = conn.cursor()
+        query = 'insert into tokens(username, token) values(%s, %s)'
         try:
-            return s.loads(token, max_age=max_age)
-
-        # Token is not valid
+            cur.execute(query, (self.username, self.token))
+            return True
         except Exception as e:
             print(e)
-            return None
+            return False
 
+    def is_valid_token(self, max_age):
+        """
+        Check if a token exists and is valid
+        :param max_age: in seconds
+        :return: 
+        """
+        # Load serializer
+        cfg = load_config()
+        secret_key = cfg['keys']['secret_key']
+        s = TimedSerializer(secret_key)
 
-def add_token(username, token):
-    """
-    Add a token to the database
-    """
-    conn = connect()
-    cur = conn.cursor()
-    query = 'insert into tokens(username, token) values(%s, %s)'
-    try:
-        cur.execute(query, (username, token))
-        return True
-    except Exception as e:
-        print(e)
-        return False
+        # Query to database
+        conn = connect()
+        cur = conn.cursor()
+        query = 'select token from tokens' \
+                'where username=%s and token=%s'
+        cur.execute(query, (self.username, self.token))
+        token = cur.fetch_one()
 
+        # Token exists
+        if token is not None:
+            try:
+                return s.loads(token, max_age=max_age)
+
+            # Token is not valid
+            except Exception as e:
+                print(e)
+                return None
 
 
 

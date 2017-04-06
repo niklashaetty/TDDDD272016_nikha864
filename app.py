@@ -6,7 +6,7 @@ import json
 import bcrypt                                   # Bcrypt for hashing
 
 import server.models as models
-from server.models import User
+from server.models import User, Token
 
 app = Flask(__name__)
 
@@ -51,6 +51,38 @@ def register_user():
     else:
         return jsonify(success=False,
                        message='Unknown error occurred')
+
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    """
+    Login a user with submitted username and password.
+    If everything is ok, a token will be issued and returned.
+    """
+    username = request.form['username']
+    plain_password = request.form['password']
+
+    # Make sure everything is valid
+    validation = json.loads(validate_user_data(username, plain_password))
+    if not validation['success']:
+        return jsonify(success=False,
+                       message=validation['message'])
+    user = User.get_user(username)
+    # Check that user exists
+    if not user:
+        return jsonify(success=False,
+                       message='Wrong username or password')
+    # Check that password matches
+    if not bcrypt.checkpw(plain_password.encode('utf-8'), user.password_hash):
+        return jsonify(success=False,
+                       message='Wrong username or password')
+    # All good, issue token and add it to the database
+    token = user.issue_token()
+    token = Token(user.username, token)
+    token.add_token_to_database()
+    return jsonify(success=True,
+                   message='Successfully logged in user {0}'.format(user),
+                   token=token.token.decode('utf-8'))
 
 
 def generate_hash(plain_password):

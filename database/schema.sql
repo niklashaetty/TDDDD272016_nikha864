@@ -1,7 +1,6 @@
 create table if not exists users(
-    uid serial not null unique,
     username text not null unique,
-    password_hash text not null unique,
+    password_hash varchar not null unique,
     primary key(uid)
 );
 
