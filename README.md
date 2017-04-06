@@ -1,5 +1,5 @@
 # [project name] - TDDD27 Advanced web programming
-[Click here to get to up-to-date deployment](https://tddd27-nikha864.herokuapp.com/)
+[Click here to get to ~~up-to-date~~ deployment](https://tddd27-nikha864.herokuapp.com/)
 
 [project name] is a webbapplication that lets you create you own course plan for your masters program. Lets you visualize your course plan, complete with requirements for graduation, potential schedule conflict.
 
