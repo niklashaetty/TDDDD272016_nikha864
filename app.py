@@ -40,19 +40,17 @@ def register_user():
     # Check that user does not already exist
     if User.user_exists(username):
         return jsonify(success=False,
-                       message='User already exists')
+                       message='User {0} already exists'.format(username))
 
     # Create user and check that everything went ok
     password_hash = generate_hash(plain_password)
     created_user = User.create_user(username, password_hash)
     if created_user:
         return jsonify(success=True,
-                       message='User successfully registered')
+                       message='Successfully registered new user {0}'.format(username))
     else:
         return jsonify(success=False,
                        message='Unknown error occurred')
-
-
 
 
 def generate_hash(plain_password):
