@@ -170,6 +170,7 @@ chrome-user-data
 *.sublime-workspace
 .idea
 *.iml
+client/node_modules
 
 
 nikha864_files
