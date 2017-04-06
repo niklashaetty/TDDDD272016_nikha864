@@ -53,7 +53,7 @@ class RegisterForm extends React.Component {
     };
   }
 
-
+  // Update values when writing in a form
   handleChange = (event) =>{
     const target = event.target;
     const value = target.value;
@@ -64,28 +64,48 @@ class RegisterForm extends React.Component {
     });
   }
 
-  resetForm () {
-    this.refs.reg_username.value = '';
+  // Reset form. if fullReset is false, only passwords will be reset.
+  resetForm(fullReset) {
+    if(fullReset) {
+      this.refs.reg_username.value = '';
+    }
     this.refs.reg_password.value = '';
     this.refs.reg_confirm_password.value = '';
   }
 
-  async handleSubmit (event)  {
-    event.preventDefault();
-    let res = await this.search(this.state.username);
-    let res2 = await this.register();
-    console.log(res2.message);
-    console.log(res.username);
-    this.setState({hideResponse: false,
-                  responseMessage: res2.message,
-                  positiveResponse: res2.success});
-    this.resetForm();
+  // Validate a submission on client side. If fail, set states so that responseMessage will be shown.
+  validSubmission = () => {
+    if(this.state.password.length < 7){
+      this.setState({responseMessage: 'Password must be at least 8 characters',
+                     positiveResponse: false,
+                     hideResponse: false});
+      return false;
+    }
+    else if(this.state.password !== this.state.confirmPassword){
+      this.setState({responseMessage: 'Password do not match',
+                     positiveResponse: false,
+                     hideResponse: false});
+      return false;
+    }
+    else{
+      return true;
+    }
   }
 
-  async search(query){
-    const response = await fetch(`api/users?q=${query}`);
-    return await response.json();
+  // Handle the submission of a form
+  async handleSubmit (event)  {
+    event.preventDefault();
 
+    if(this.validSubmission()){
+      let response = await this.register();
+      this.setState({hideResponse: false,
+                  responseMessage: response.message,
+                  positiveResponse: response.success});
+      this.resetForm(true);
+    }
+    else {
+      this.resetForm(false);   // Reset only passwords when clientside validation fails.
+    }
   }
 
   // Send register request to server
@@ -144,7 +164,13 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {hidden: true};
+    this.state = {hidden: false,
+      username: '',
+      password: '',
+      hideResponse: true,
+      responseMessage: '',
+      positiveResponse: null
+    };
   }
 
 
