@@ -1,0 +1,54 @@
+.header{
+  height: 50px;
+  width: 100%;
+  background-color: #545a6a;
+  position: fixed;
+  border-bottom: 1px solid #fff;
+}
+
+.logo_text{
+  margin-top: 12px;
+  float: left;
+  font-size: 20px;
+  color: #fff;
+  font-family: 'Alegreya Sans';
+  cursor:pointer;
+}
+
+.menu_right{
+  margin-right: 20px;
+  float: right;
+}
+
+.menu_item{
+  color: #fff;
+  float: left;
+  font-size: 14px;
+}
+
+a, a:visited{
+  text-decoration: none;
+  color: #fff;
+}
+
+.v_divider {
+  border-right: 1px solid #333;
+  height:20px;
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+  float: left;
+}
+
+
+.logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 50px;
+  float: left;
+  cursor:pointer;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
