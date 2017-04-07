@@ -25,5 +25,5 @@ The following tools will be used in the project
 
 ## Extra tools
 * [Postman](https://www.getpostman.com/) - Used to test back end.
-* Some sort of testing tool to automate page-loading into correct page.
+* Some sort of testing tool to automate page-loading into correct page. <-- create-react-app does this
 * [create-react-app](https://github.com/facebookincubator/create-react-app) - Client build tool. React app with no configuration.
