@@ -20,14 +20,14 @@ class FormResult extends React.Component {
     else if(this.props.positive){
       style = {
         display: 'block'
-      }
+      };
       displayIcon = <FontAwesome name="check" style={{color:'green'}}/>
 
     }
     else {
       style = {
         display: 'block'
-      }
+      };
       displayIcon = <FontAwesome style={{color: '#ED4337'}} name="exclamation-circle"/>
     }
     return (
@@ -173,32 +173,93 @@ class LoginForm extends React.Component {
     };
   }
 
+      // Update values when writing in a form
+  handleChange = (event) =>{
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
 
-  handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
+    this.setState({
+      [name]: value
+
+    });
+  }
+
+  // Reset form. if fullReset is false, only passwords will be reset.
+  resetForm(fullReset) {
+    if(fullReset) {
+      this.refs.login_username.value = '';
+    }
+    this.refs.login_password.value = '';
+  }
+
+  // Validate a submission on client side. If fail, set states so that responseMessage will be shown.
+  validSubmission = () => {
+    if(this.state.password.length < 7){
+      this.setState({responseMessage: 'Password must be at least 8 characters',
+                     positiveResponse: false,
+                     hideResponse: false});
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+// Handle the submission of a form
+  async handleSubmit (event)  {
     event.preventDefault();
+
+    if(this.validSubmission()){
+      let response = await this.login();
+      this.setState({hideResponse: false,
+                  responseMessage: response.message,
+                  positiveResponse: response.success});
+      localStorage.setItem('token', response.token);
+      this.resetForm(true);
+    }
+    else {
+      this.resetForm(false);   // Reset only passwords when clientside validation fails.
+    }
+  }
+
+  // Send login request to server
+  async login(){
+    let payload = new FormData();
+    payload.append("username", this.state.username);
+    payload.append("password", this.state.password);
+    const response = await fetch('/login', {
+      method: 'post',
+      body: payload
+    });
+    return await response.json();
   }
 
   render() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
           <div className="input_form">
             <input
+              ref="login_username"
               type="text"
+              name="username"
               required
               placeholder="Username"
             />
           </div>
           <div className="input_form">
             <input
+              ref="login_password"
               type="password"
+              name="password"
               required
               placeholder="Password"
             />
           </div>
           <button className="submit">Submit</button>
         </form>
+        <FormResult hidden={this.state.hideResponse} positive={this.state.positiveResponse} message={this.state.responseMessage}/>
       </div>
     );
   }

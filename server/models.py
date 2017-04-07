@@ -11,6 +11,8 @@ import os
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
+TWO_HOURS = 7200
+
 
 def load_config():
     """
@@ -58,8 +60,6 @@ class User:
     The user of the application
     """
 
-    TWO_HOURS = 7200
-
     def __init__(self, username, password_hash):
         self.username = username
         self.password_hash = password_hash
@@ -98,7 +98,6 @@ class User:
         secret_key = cfg['keys']['secret_key']
         s = Serializer(secret_key, expires_in=expiration)
         token = s.dumps({'username': self.username})
-        print('issuing token:', token)
         return token
 
         # s.loads(token, max_age=3600)
@@ -106,7 +105,8 @@ class User:
     @staticmethod
     def get_user(username):
         """
-        Retrieves the user with the provided email.
+        Retrieves the user information by username.
+        :return: User object
         """
         conn = connect()
         cur = conn.cursor()
@@ -160,7 +160,7 @@ class Token:
             print(e)
             return False
 
-    def is_valid_token(self, max_age):
+    def is_valid_token(self, max_age=TWO_HOURS):
         """
         Check if a token exists and is valid
         :param max_age: in seconds
@@ -169,7 +169,7 @@ class Token:
         # Load serializer
         cfg = load_config()
         secret_key = cfg['keys']['secret_key']
-        s = TimedSerializer(secret_key)
+        s = Serializer(secret_key, expires_in=max_age)
 
         # Query to database
         conn = connect()
@@ -182,12 +182,31 @@ class Token:
         # Token exists
         if token is not None:
             try:
-                return s.loads(token, max_age=max_age)
+                return s.loads(token)
 
             # Token is not valid
             except Exception as e:
                 print(e)
                 return None
 
+    @staticmethod
+    def get_token(username):
+        """
+        Retrieves the token with the provided username.
+        :return: Token object
+        """
+        conn = connect()
+        cur = conn.cursor()
+        query = 'select username, token from tokens where username=%s'
+        try:
+            cur.execute(query, (username,))
+            token_info = cur.fetchone()
+            if not token_info:
+                return None
+            else:
+                return Token(token_info[0], token_info[1])
+        except Exception as e:
+            print(e)
+            return None
 
 

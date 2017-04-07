@@ -81,7 +81,7 @@ def login_user():
     token = Token(user.username, token)
     token.add_token_to_database()
     return jsonify(success=True,
-                   message='Successfully logged in user {0}'.format(user),
+                   message='Successfully logged in user {0}'.format(user.username),
                    token=token.token.decode('utf-8'))
 
 
