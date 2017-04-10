@@ -101,10 +101,10 @@ class User:
         """
         cfg = load_config()
         secret_key = cfg['keys']['secret_key']
-        token = jwt.encode({
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration),
-            'username': self.username
-        }, secret_key)
+        token = jwt.encode(
+            {'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration),
+             'username': self.username},
+            secret_key)
         return token
 
     @staticmethod
@@ -145,72 +145,21 @@ class User:
             return None
 
 
-class Token:
+def is_valid_token(jwt_encoded):
+    """
+    Decode a token and check its validity
+    """
 
-    def __init__(self, username, token):
-        self.username = username
-        self.token = token
+    # Load config
+    cfg = load_config()
+    secret_key = cfg['keys']['secret_key']
 
-    def add_token_to_database(self):
-        """
-        Add a token to the database
-        """
-        conn = connect()
-        cur = conn.cursor()
-        query = 'insert into tokens(username, token) values(%s, %s)'
+    if jwt_encoded is not None:
         try:
-            cur.execute(query, (self.username, self.token))
-            return True
-        except Exception as e:
-            print(e)
-            return False
+            return jwt.decode(jwt_encoded, secret_key)
 
-    def is_valid_token(self):
-        """
-        Query the database for specific token. Check if that token exists and is valid.
-        :param max_age: in seconds
-        :return: 
-        """
-        # Load config
-        cfg = load_config()
-        secret_key = cfg['keys']['secret_key']
-
-        # Query to database
-        conn = connect()
-        cur = conn.cursor()
-        query = 'select token from tokens' \
-                'where username=%s and token=%s'
-        cur.execute(query, (self.username, self.token))
-        token = cur.fetch_one()
-
-        # Token exists
-        if token is not None:
-            try:
-                return jwt.encode(token, secret_key)
-
-            # Token is not valid
-            except Exception as e:
-                print(e)
-                return None
-
-    @staticmethod
-    def get_token(username):
-        """
-        Retrieves the token with the provided username.
-        :return: Token object
-        """
-        conn = connect()
-        cur = conn.cursor()
-        query = 'select username, token from tokens where username=%s'
-        try:
-            cur.execute(query, (username,))
-            token_info = cur.fetchone()
-            if not token_info:
-                return None
-            else:
-                return Token(token_info[0], token_info[1])
+        # Token is not valid
         except Exception as e:
             print(e)
             return None
-
 
