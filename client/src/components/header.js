@@ -7,20 +7,25 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import logo from '../img/logo.svg';
 import '../css/header.css';
+import Auth from './auth';
 import FontAwesome from 'react-fontawesome';
 
 class Header extends Component {
 
     render() {
         let display = null;
-        console.log('user: ' + this.props.user);
+
         // If we're logged in, show the username in the top right
         if (this.props.user) {
-            display = <p className="menu_item">
-                <Link to={{pathname: '/dashboard', state: {username: this.props.user}}}>
-                    <FontAwesome name="user-o"/> {this.props.user}
-                </Link>
-            </p>;
+            display =
+              <div className="menu_right">
+                  <p className="menu_item">
+                      <Link to={{pathname: '/dashboard', state: {username: this.props.user}}}>
+                          <FontAwesome name="user-o"/> {this.props.user}
+                      </Link>
+                  </p>
+              </div>;
+
         }
 
         return (

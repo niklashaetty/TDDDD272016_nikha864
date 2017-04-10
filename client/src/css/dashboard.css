@@ -1,10 +1,77 @@
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://fonts.googleapis.com/css?family=Libre+Franklin');
 
-.dashboard_welcome {
+.wrapper{
+  min-height: 750px;
+}
+
+.dashboard_wrapper {
+  padding-top: 100px;
+  text-align: left;
+  width: 800px;
+  height: 800px;
+  margin: auto
+}
+
+.dashboard_left{
   width: 400px;
-  height: 500px;
+  height: 330px;
+
+}
+
+.dashboard_right{
+  width: 300px;
+  height: 300px;
+  float:left;
+  margin-left: 430px;
+  margin-top: -357px;
+  color: #595959;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #EBF1F2;
+}
+
+.dashboard_big{
+  width: 398px;
+  height: 300px;
   margin: auto;
-  padding-top: 200px;
   color: #595959;
   text-align: center;
+  background-color: white;
+    border-radius: 5px;
+  border: 1px solid #EBF1F2;
+}
+
+.dashboard_headline{
+  height: 25px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #F2F8FA;
+  float: left;
+  font-size: 14px;
+  color: #77898C;
+  font-family: 'Libre Franklin', sans-serif;
+  margin: 0 0 0 0;
+  padding: 4px 0 0 5px;
+  border-radius: 3px;
+
+}
+
+.whitespace{
+  height: 30px;
+}
+
+.logout {
+  margin-left: 204px;
+  margin-top: 260px;
+  width: 25%;
+  height: 23px;
+  color: #595959;
+  background-color: white;
+  padding-top: 6px;
+  padding-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid #EBF1F2;
 }
