@@ -1,6 +1,8 @@
 /* Components related to the home page such as the register and login forms */
 
 import React, { Component } from 'react';
+import { RouteTransition } from 'react-router-transition';
+import {browserHistory} from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import '../css/header.css';
 import '../css/home.css';
@@ -77,14 +79,14 @@ class RegisterForm extends React.Component {
   validSubmission = () => {
     if(this.state.password.length < 7){
       this.setState({responseMessage: 'Password must be at least 8 characters',
-                     positiveResponse: false,
-                     hideResponse: false});
+        positiveResponse: false,
+        hideResponse: false});
       return false;
     }
     else if(this.state.password !== this.state.confirmPassword){
       this.setState({responseMessage: 'Password do not match',
-                     positiveResponse: false,
-                     hideResponse: false});
+        positiveResponse: false,
+        hideResponse: false});
       return false;
     }
     else{
@@ -99,8 +101,8 @@ class RegisterForm extends React.Component {
     if(this.validSubmission()){
       let response = await this.register();
       this.setState({hideResponse: false,
-                  responseMessage: response.message,
-                  positiveResponse: response.success});
+        responseMessage: response.message,
+        positiveResponse: response.success});
       this.resetForm(true);
     }
     else {
@@ -169,11 +171,12 @@ class LoginForm extends React.Component {
       password: '',
       hideResponse: true,
       responseMessage: '',
-      positiveResponse: null
+      positiveResponse: null,
+      authorized: false
     };
   }
 
-      // Update values when writing in a form
+  // Update values when writing in a form
   handleChange = (event) =>{
     const target = event.target;
     const value = target.value;
@@ -197,8 +200,8 @@ class LoginForm extends React.Component {
   validSubmission = () => {
     if(this.state.password.length < 7){
       this.setState({responseMessage: 'Password must be at least 8 characters',
-                     positiveResponse: false,
-                     hideResponse: false});
+        positiveResponse: false,
+        hideResponse: false});
       return false;
     }
     else{
@@ -210,21 +213,39 @@ class LoginForm extends React.Component {
   async handleSubmit (event)  {
     event.preventDefault();
 
+    // Client-side validation
     if(this.validSubmission()){
-      let response = await this.login();
-      this.setState({hideResponse: false,
-                  responseMessage: response.message,
-                  positiveResponse: response.success});
-      localStorage.setItem('token', response.token);
-      this.resetForm(true);
+      let loginResponse = await this.loginRequest();
+
+      // Server accepted loginRequest. Store token and push client to dashboard.
+      if (loginResponse.success){
+        console.log('loggin in: ' + this.state.username + '\n' + 'token is: '  + loginResponse.token);
+        localStorage.setItem('token', loginResponse.token);
+        browserHistory.push({
+          pathname: '/dashboard',
+          state: { username: this.state.username}
+        });
+      }
+
+      // Rejected, show error
+      else {
+        this.setState({
+          hideResponse: false,
+          responseMessage: loginResponse.message,
+          positiveResponse: loginResponse.success
+        });
+        this.resetForm(true);
+      }
     }
+
+    // Reset only passwords when clientside validation fails for better user experience.
     else {
-      this.resetForm(false);   // Reset only passwords when clientside validation fails.
+      this.resetForm(false);
     }
   }
 
-  // Send login request to server
-  async login(){
+  // Send loginRequest request to server
+  async loginRequest(){
     let payload = new FormData();
     payload.append("username", this.state.username);
     payload.append("password", this.state.password);
@@ -232,6 +253,7 @@ class LoginForm extends React.Component {
       method: 'post',
       body: payload
     });
+
     return await response.json();
   }
 
@@ -259,17 +281,23 @@ class LoginForm extends React.Component {
           </div>
           <button className="submit">Submit</button>
         </form>
-        <FormResult hidden={this.state.hideResponse} positive={this.state.positiveResponse} message={this.state.responseMessage}/>
+        <FormResult hidden={this.state.hideResponse} positive={this.state.positiveResponse}
+                    message={this.state.responseMessage}/>
       </div>
     );
+
+
   }
 }
 
-// Render home page when not logged in
+// Home class
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {showSignup: true};
+    this.state = {
+      showSignup: true,
+    };
+
   }
 
   handleSwap = () =>{
@@ -278,8 +306,8 @@ class Home extends Component {
 
   render() {
     let display = null;
-    const showSignup = this.state.showSignup;
-    if(showSignup){
+
+    if(this.state.showSignup){
       display = <RegisterForm />
     }
     else{

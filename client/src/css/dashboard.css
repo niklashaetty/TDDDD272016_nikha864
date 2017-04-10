@@ -1,0 +1,10 @@
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+.dashboard_welcome{
+  width: 400px;
+  height: 500px;
+  margin:auto;
+  padding-top: 200px;
+  color: #595959;
+  text-align: center;
+}
