@@ -11,8 +11,6 @@ import datetime
 
 import jwt
 
-
-
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
@@ -33,7 +31,9 @@ def connect():
     """
     Decide here if you want to connect using environment var or config file.
     """
-    return connect_cfg()   # Using cfg file
+    return connect_cfg()  # Using cfg file
+
+
 #   return connect_env()   # Using Env var
 
 
@@ -74,7 +74,7 @@ class User:
         cur = conn.cursor()
         query = 'select password_hash from users where username=%'
         try:
-            cur.execute(query, (self.username, ))
+            cur.execute(query, (self.username,))
             return cur.fetchone()[0]
         except Exception as e:
             print(e)
@@ -138,7 +138,7 @@ class User:
         query = 'select exists(select 1 from users where username =%s)'
 
         try:
-            cur.execute(query, (username, ))
+            cur.execute(query, (username,))
             return cur.fetchone()[0]
         except Exception as e:
             print(e)
@@ -162,4 +162,3 @@ def is_valid_token(jwt_encoded):
         except Exception as e:
             print(e)
             return None
-

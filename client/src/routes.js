@@ -1,7 +1,7 @@
 /* Contains all routing logic */
 
 import React from 'react';
-import {Router, Route, browserHistory, IndexRoute } from 'react-router';
+import {Router, Route, browserHistory, IndexRoute} from 'react-router';
 import createHistory from 'history/createBrowserHistory'
 
 // Error components
@@ -16,32 +16,32 @@ import Dashboard from './components/dashboard';
 
 class Routes extends React.Component {
 
-  async redirectIfLoggedIn (){
-    if(Auth.loggedIn()){
-      let username = await Auth.getUsername();
-      browserHistory.push({
-        pathname: '/dashboard',
-        state: { username: username}
-      });
+    async redirectIfLoggedIn() {
+        if (Auth.loggedIn()) {
+            let username = await Auth.getUsername();
+            browserHistory.push({
+                pathname: '/dashboard',
+                state: {username: username}
+            });
+        }
     }
-  }
 
-  requireAuth(){
-    if(!Auth.loggedIn()) {
-      browserHistory.push('/')
+    requireAuth() {
+        if (!Auth.loggedIn()) {
+            browserHistory.push('/')
+        }
     }
-  }
 
-  render(){
-    return (
-      <Router history={browserHistory}>
-        <Route path="/" component={Home} onEnter={this.redirectIfLoggedIn}/>
-        <Route path="/users/:id" component={Login} />
-        <Route path="/dashboard" components={Dashboard} onEnter={this.requireAuth}/>
-        <Route path="*" component={NotFound} />
-      </Router>
-    );
-  }
+    render() {
+        return (
+          <Router history={browserHistory}>
+              <Route path="/" component={Home} onEnter={this.redirectIfLoggedIn}/>
+              <Route path="/users/:id" component={Login}/>
+              <Route path="/dashboard" components={Dashboard} onEnter={this.requireAuth}/>
+              <Route path="*" component={NotFound}/>
+          </Router>
+        );
+    }
 }
 
 export default Routes;

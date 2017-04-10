@@ -1,20 +1,20 @@
-.error_page{
+.error_page {
   width: 500px;
   height: 600px;
-  margin:auto;
+  margin: auto;
   padding-top: 200px;
 }
 
-.not_found_big{
-    color: #595959;
-    font-family: 'Alegreya Sans';
-    text-align: center;
-    font-size: 50px;
+.not_found_big {
+  color: #595959;
+  font-family: 'Alegreya Sans';
+  text-align: center;
+  font-size: 50px;
 }
 
-.not_found_small{
-    color: #595959;
-    font-family: 'Alegreya Sans';
-    text-align: center;
-    font-size: 30px;
+.not_found_small {
+  color: #595959;
+  font-family: 'Alegreya Sans';
+  text-align: center;
+  font-size: 30px;
 }

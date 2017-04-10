@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, jsonify       # Flask modules
+from flask import Flask, request, jsonify  # Flask modules
 import json
-import bcrypt                                   # Bcrypt for hashing
+import bcrypt  # Bcrypt for hashing
 
 import server.models as models
 
@@ -133,6 +133,7 @@ def validate_user_data(username, plain_password):
     else:
         return json.dumps({'success': True,
                            'message': 'User data valid'})
+
 
 if __name__ == '__main__':
     app.run()
