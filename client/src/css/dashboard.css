@@ -75,3 +75,40 @@
   border-radius: 3px;
   border: 1px solid #EBF1F2;
 }
+
+.planner_link{
+  clear:both;
+height: 23px;
+}
+
+.link_name{
+  float:left;
+  text-align: left;
+  height: 23px;
+
+  line-height: 23px;
+  font-size: 11px;
+  color: #77898C;
+  font-family: 'Libre Franklin', sans-serif;
+  padding: 0 0 0 5px;
+  margin: 0;
+  border-bottom: 1px dotted #F2F8FA;
+}
+
+.delete_icon{
+  height: 24px;
+  width: 50px;
+  padding: 0 0 0 0;
+  margin: 0;
+  float: right;
+  cursor: pointer;
+  color: #F2F8FA;
+}
+
+.delete_icon:hover{
+  color: #ED4337;
+}
+
+.link_name:hover {
+  color: black;
+}
