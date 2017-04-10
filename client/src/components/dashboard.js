@@ -16,7 +16,6 @@ class PlannerLink extends Component {
         return (
           <div className="planner_link">
               <a className="link_name">{this.props.name}</a>
-              <p className="delete_icon"><FontAwesome name="ban"/></p>
           </div>
         );
     }
@@ -24,6 +23,7 @@ class PlannerLink extends Component {
 
 class Dashboard extends Component {
 
+    // Test function to fill course plans
     fillCourseplans () {
         var plans = [
             {name: 'testplan1'},
@@ -50,22 +50,25 @@ class Dashboard extends Component {
     render() {
 
         let coursePlans = this.fillCourseplans();
-
-
         return (
           <div className="wrapper">
               <Header user={this.props.location.state.username}/>
               <div className="dashboard_wrapper">
                   <div className="dashboard_left">
-                      <div className="dashboard_headline">Course plans</div>
+                      <div className="dashboard_headline">My course plans</div>
                       <div className="dashboard_big">
-                          <div className="whitespace"> </div>
+                          <div className="planner_link">
+                              <p className="link_headline">Name</p>
+                          </div>
                           {coursePlans}
+                          <div className="button_div_left">
+                          <div className="button"><FontAwesome name="plus" /> Create new</div>
+                          </div>
                       </div>
 
                       <div className="whitespace"> </div>
 
-                      <div className="dashboard_headline">Favourites</div>
+                      <div className="dashboard_headline">Saved course plans</div>
                       <div className="dashboard_big">
                       </div>
                   </div>
@@ -73,9 +76,11 @@ class Dashboard extends Component {
                   <div className="dashboard_right">
                       <div className="dashboard_headline">Dashboard</div>
                       <div className="dashboard_small">
+                          <div className="button_div">
                           <Link to={{pathname: '/'}}>
-                              <p onClick={() => {Auth.logOut()}} className="logout"><FontAwesome name="sign-out" />Log out</p>
+                              <div onClick={() => {Auth.logOut()}} className="button"><FontAwesome name="sign-out" />Log out</div>
                           </Link>
+                          </div>
                       </div>
                   </div>
 
