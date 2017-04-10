@@ -4,16 +4,21 @@
 
 module.exports = {
     getToken () {
-        return localStorage.token;
+        return localStorage.getItem('token');
     },
 
     loggedIn(){
-        return !!localStorage.token
+        return (localStorage.getItem('token') !== null);
     },
 
 
     logOut(){
-        delete localStorage.token
+        localStorage.removeItem('token');
+    },
+
+    login(jwt){
+        localStorage.setItem('token', jwt);
+
     },
 
     /*
@@ -22,7 +27,6 @@ module.exports = {
      */
     async getUsername(){
         let token = this.getToken();
-        console.log('token is: ' + token);
         let payload = new FormData();
         payload.append("token", token);
         let response = await fetch('/get_username', {
@@ -31,7 +35,7 @@ module.exports = {
         });
 
         let response2 = await response.json();
-        console.log('response: ' + response2.success + ' -- username: ' + response2.username);
+
         // Return username is token was valid.
         if (response2.success) {
             return response2.username;

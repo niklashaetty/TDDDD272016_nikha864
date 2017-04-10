@@ -33,7 +33,7 @@ class Dashboard extends Component {
                       <div className="dashboard_headline">Dashboard</div>
                       <div className="dashboard_small">
                           <Link to={{pathname: '/'}}>
-                          <p onClick={Auth.logOut()} className="logout"><FontAwesome name="sign-out"/>Log out</p>
+                          <p onClick={() => {Auth.logOut()}} className="logout"><FontAwesome name="sign-out"/>Log out</p>
                           </Link>
                       </div>
                   </div>
