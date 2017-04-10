@@ -6,7 +6,6 @@ import json
 import bcrypt                                   # Bcrypt for hashing
 
 import server.models as models
-from server.models import User, Token
 
 app = Flask(__name__)
 
@@ -38,19 +37,19 @@ def register_user():
                        message=validation['message'])
 
     # Check that user does not already exist
-    if User.user_exists(username):
+    if models.User.user_exists(username):
         return jsonify(success=False,
                        message='User {0} already exists'.format(username))
 
     # Create user and check that everything went ok
     password_hash = generate_hash(plain_password)
-    created_user = User.create_user(username, password_hash)
+    created_user = models.User.create_user(username, password_hash)
     if created_user:
         return jsonify(success=True,
                        message='Successfully registered new user {0}'.format(username))
     else:
         return jsonify(success=False,
-                       message='Unknown error occurred')
+                       message='Unknown database error occurred')
 
 
 @app.route('/login', methods=['POST'])
@@ -67,7 +66,7 @@ def login_user():
     if not validation['success']:
         return jsonify(success=False,
                        message=validation['message'])
-    user = User.get_user(username)
+    user = models.User.get_user(username)
 
     # Check that user exists
     if not user:
@@ -81,11 +80,30 @@ def login_user():
 
     # All good, issue token and add it to the database
     token = user.issue_token()
-    token = Token(user.username, token)
-    token.add_token_to_database()
     return jsonify(success=True,
                    message='Successfully logged in user {0}'.format(user.username),
-                   token=token.token.decode('utf-8'))
+                   token=token.decode('utf-8'))
+
+
+@app.route('/get_username', methods=['POST'])
+def get_username():
+    """
+    Get username using a provided JSON Web Token
+    """
+    jwt = request.form['token']
+
+    # Validate token
+    decoded_jwt = models.is_valid_token(jwt)
+    if decoded_jwt:
+        username = decoded_jwt['username']
+        return jsonify(success=True,
+                       message='Successfully retrieved username',
+                       username=username)
+
+    # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
 
 
 def generate_hash(plain_password):
@@ -101,7 +119,7 @@ def validate_user_data(username, plain_password):
         return json.dumps({'success': False,
                            'message': 'Password or username missing'})
 
-    # Make sure they data are unicodes
+    # Make sure they data is str
     if not isinstance(username, str) or not isinstance(plain_password, str):
         return json.dumps({'success': False,
                            'message': 'Invalid username or password provided (must be string)'})
