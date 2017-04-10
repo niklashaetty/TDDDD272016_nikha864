@@ -10,20 +10,22 @@ import '../css/header.css';
 import FontAwesome from 'react-fontawesome';
 
 class Header extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {user: null};
-	}
 
 	render() {
 		let display = null;
-		if(this.state.user){
-			display = <p className="menu_item"><Link to='/:id/dashboard' ><FontAwesome name="user-o"/> {this.state.user}</Link></p>;
+    console.log('user: ' + this.props.user);
+		// If we're logged in, show the username in the top right
+		if(this.props.user){
+			display = <p className="menu_item">
+        <Link to={{pathname:'/dashboard', state:{username: this.props.user}}}>
+          <FontAwesome name="user-o"/> {this.props.user}
+        </Link>
+      </p>;
 		}
 
 		return (
 			<div className="header">
-				<Link to ='/users/tjena'>
+				<Link to ='/'>
 					<img src={logo} className="logo" alt="logo" />
 					<div className="logo_text"> Project Name</div>
 				</Link>
@@ -34,5 +36,10 @@ class Header extends Component {
 		);
 	}
 }
+
+// Default properties for the header class
+Header.defaultProps = {
+  user: null
+};
 
 export default Header;
