@@ -8,6 +8,7 @@ import '../css/header.css';
 import '../css/home.css';
 import '../index.css';
 import Header from './header';
+import Auth from './auth';
 
 // Show the result of a form, i.e feedback from registration
 class FormResult extends React.Component {
@@ -231,7 +232,7 @@ class LoginForm extends React.Component {
             // Server accepted loginRequest. Store token and push client to dashboard.
             if (loginResponse.success) {
                 console.log('loggin in: ' + this.state.username + '\n' + 'token is: ' + loginResponse.token);
-                localStorage.setItem('token', loginResponse.token);
+                Auth.login(loginResponse.token);
                 browserHistory.push({
                     pathname: '/dashboard',
                     state: {username: this.state.username}
