@@ -7,6 +7,11 @@ The database url must be specified in 'config.ini' or as an environment variable
 import configparser
 import psycopg2
 import os
+import datetime
+
+import jwt
+
+
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
@@ -92,15 +97,15 @@ class User:
 
     def issue_token(self, expiration=TWO_HOURS):
         """
-        Generate a token with timestamp
+        Generate a token with timestamp and expiration.
         """
         cfg = load_config()
         secret_key = cfg['keys']['secret_key']
-        s = Serializer(secret_key, expires_in=expiration)
-        token = s.dumps({'username': self.username})
+        token = jwt.encode({
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration),
+            'username': self.username
+        }, secret_key)
         return token
-
-        # s.loads(token, max_age=3600)
 
     @staticmethod
     def get_user(username):
@@ -160,16 +165,15 @@ class Token:
             print(e)
             return False
 
-    def is_valid_token(self, max_age=TWO_HOURS):
+    def is_valid_token(self):
         """
-        Check if a token exists and is valid
+        Query the database for specific token. Check if that token exists and is valid.
         :param max_age: in seconds
         :return: 
         """
-        # Load serializer
+        # Load config
         cfg = load_config()
         secret_key = cfg['keys']['secret_key']
-        s = Serializer(secret_key, expires_in=max_age)
 
         # Query to database
         conn = connect()
@@ -182,7 +186,7 @@ class Token:
         # Token exists
         if token is not None:
             try:
-                return s.loads(token)
+                return jwt.encode(token, secret_key)
 
             # Token is not valid
             except Exception as e:

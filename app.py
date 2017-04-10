@@ -68,14 +68,17 @@ def login_user():
         return jsonify(success=False,
                        message=validation['message'])
     user = User.get_user(username)
+
     # Check that user exists
     if not user:
         return jsonify(success=False,
                        message='Wrong username or password')
+
     # Check that password matches
     if not bcrypt.checkpw(plain_password.encode('utf-8'), user.password_hash):
         return jsonify(success=False,
                        message='Wrong username or password')
+
     # All good, issue token and add it to the database
     token = user.issue_token()
     token = Token(user.username, token)
