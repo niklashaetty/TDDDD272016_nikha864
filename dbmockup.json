@@ -1,0 +1,48 @@
+
+------PLANS
+{
+    "_id" : 1,
+    "owner" : "niklas",
+    "semesters" : [
+        {
+            "semester": "2016HT",
+            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
+            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+        },
+        {
+            "semester": "2016HT",
+            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
+            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+        },
+        {
+            "semester": "2016HT",
+            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
+            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+        },
+
+
+    ]
+}
+
+
+------COURSES
+{
+    "_id" : 1,
+    "code": "TDDD01",
+    "name": "Testcourse 1",
+    "periods" : ["HT1", "HT2"],
+    "hp": 6,
+    "blocks": [2,4]
+}
+
+-----USERS
+
+{
+    "_id" : 1,
+    "username": "niklas",
+    "password_hash": "hjkdsjfhkhjskdfjhksdkjhfjkhfsd"
+}
+
+
+
+
