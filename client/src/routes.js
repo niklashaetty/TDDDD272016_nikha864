@@ -12,6 +12,7 @@ import Home from './components/home';
 import Login from './components/login';
 import Auth from './components/auth';
 import Dashboard from './components/dashboard';
+import CoursePlan from './components/courseplan';
 
 
 class Routes extends React.Component {
@@ -38,6 +39,7 @@ class Routes extends React.Component {
               <Route path="/" component={Home} onEnter={this.redirectIfLoggedIn}/>
               <Route path="/users/:id" component={Login}/>
               <Route path="/dashboard" components={Dashboard} onEnter={this.requireAuth}/>
+              <Route path="/p/:plan_hash" components={CoursePlan} />
               <Route path="*" component={NotFound}/>
           </Router>
         );

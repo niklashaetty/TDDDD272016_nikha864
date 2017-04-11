@@ -106,6 +106,33 @@ def get_username():
                        message='Token is not valid')
 
 
+# TODO: This is just a mockup, server should obviously send real data from the database later on.
+@app.route('/get_plan_data', methods=['POST'])
+def get_plan_data():
+    """
+    Get the meta data of a course plan
+
+    """
+    jwt = request.form['token']
+    plan_hash = request.form['plan_hash']  # user plan hash to retrieve real data later on.
+
+    # Validate token
+    decoded_jwt = models.is_valid_token(jwt)
+    if decoded_jwt:
+        username = decoded_jwt['username']
+        print('truefff')
+        return jsonify(success=True,
+                       message='Successfully retrieved plan meta data',
+                       owner='test_owner',
+                       username=username,
+                       allow_edit=False)
+
+    # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
 def generate_hash(plain_password):
     return bcrypt.hashpw(plain_password.encode('utf-8'), bcrypt.gensalt())
 

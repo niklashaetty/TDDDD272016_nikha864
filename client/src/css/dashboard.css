@@ -1,139 +1,11 @@
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 @import url('https://fonts.googleapis.com/css?family=Libre+Franklin');
-
-.wrapper{
-  min-height: 750px;
-}
-
-.dashboard_wrapper {
-  padding-top: 100px;
-  text-align: left;
-  width: 730px;
-  height: 800px;
-  margin: auto;
-}
-
-.dashboard_left{
-  clear:both;
-  width: 400px;
-  height: 630px;
-  float:left;
-
-}
-
-.dashboard_right{
-  clear: both;
-  width: 300px;
-  height: 330px;
-  float:right;
-  margin-top: -630px;
-  color: #595959;
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid #EBF1F2;
-}
-
-.dashboard_big{
-  width: 398px;
-  height: 330px;
-  margin: auto;
-  margin-top:25px;
-  color: #595959;
-  text-align: center;
-  background-color: white;
-  border-radius: 5px;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  border: 1px solid #EBF1F2;
-}
-
-.dashboard_small{
-  width: 299px;
-  height: 330px;
-  margin: auto;
-  margin-top:25px;
-  color: #595959;
-  text-align: center;
-  background-color: white;
-  border-radius: 5px;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  border: 1px solid #EBF1F2;
-}
-
-
-
-.dashboard_headline{
-  clear:both;
-  height: 25px;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #F2F8FA;
-  float: left;
-  font-size: 14px;
-  color: #77898C;
-  font-family: 'Libre Franklin', sans-serif;
-  margin: 0 0 0 0;
-  padding: 4px 0 0 5px;
-  border-radius: 3px;
-  cursor: default;
-}
-
-.whitespace{
-  height: 30px;
-}
-
-.button{
-  width: 100px;
-  height: 23px;
-  text-align: center;
-  color: #595959;
-  background-color: white;
-  padding-top: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 3px;
-  border: 1px solid #EBF1F2;
-  position: absolute;
-}
-
-.button_div{
-  float:right;
-  margin-right: 110px;
-  margin-top: 290px;
-}
-
-.button_div_left{
-  float:right;
-  margin-right: 110px;
-  margin-top: 25px;
-}
-
-
-
-.new_courseplan {
-  width: 100px;
-  height: 23px;
-  text-align: center;
-  color: #595959;
-  background-color: white;
-  font-size: 14px;
-  padding-top: 6px;
-  cursor: pointer;
-  border-radius: 3px;
-  border: 1px solid #EBF1F2;
-  float:right;
-}
-
-.planner_link{
-  clear:both;
-height: 23px;
-}
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 .link_name{
   float:left;
   text-align: left;
-  width: 100%;
+  width: 99%;
   height: 23px;
   line-height: 23px;
   font-size: 11px;
@@ -141,28 +13,26 @@ height: 23px;
   font-family: 'Libre Franklin', sans-serif;
   padding: 0 0 0 5px;
   margin: 0;
-  cursor: default;
-  border-bottom: 1px dotted #F2F8FA;
+
 
 }
-
-.link_headline{
-  float:left;
-  width: 100%;
-  text-align: left;
-  height: 23px;
-  line-height: 23px;
-  font-size: 13px;
-  color: #77898C;
-  font-family: 'Libre Franklin', sans-serif;
-  padding: 0 0 0 5px;
-  margin: 0;
-  cursor: default;
-  border-bottom: 1px solid #F2F8FA;
-}
-
-
 
 .link_name:hover {
   color: black;
+}
+
+.planner_link{
+  clear:both;
+height: 23px;
+  cursor: pointer;
+}
+
+.planner_link:hover{
+  background-color: #F2F8FA;
+  cursor: pointer;
+}
+
+.button_div{
+  margin: auto;
+  width: 140px;
 }

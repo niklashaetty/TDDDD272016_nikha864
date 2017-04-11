@@ -10,6 +10,24 @@ import '../index.css';
 import Header from './header';
 import Auth from './auth';
 
+// Material UI
+import TextField from 'material-ui/TextField';
+import FontIcon from 'material-ui/FontIcon';
+
+// Inline styles for inputs
+const styles = {
+
+    textField: {
+        width: 340,
+        marginTop: -15,
+        paddingLeft: 20,
+    },
+    inputText: {
+        color: '#595959'
+    }
+
+};
+
 // Show the result of a form, i.e feedback from registration
 class FormResult extends React.Component {
     render() {
@@ -22,16 +40,16 @@ class FormResult extends React.Component {
         }
         else if (this.props.positive) {
             style = {
-                display: 'block'
+                display: 'inline-flex'
             };
-            displayIcon = <FontAwesome name="check" style={{color: 'green'}}/>
+            displayIcon = <FontIcon className="material-icons" style={{fontSize: '18px', color: 'green'}} >done</FontIcon>
 
         }
         else {
             style = {
-                display: 'block'
+                display: 'inline-flex'
             };
-            displayIcon = <FontAwesome style={{color: '#ED4337'}} name="exclamation-circle"/>
+            displayIcon = <FontIcon className="material-icons" style={{fontSize: '18px', color: '#ED4337'}} >error</FontIcon>
         }
         return (
           <div className="feedback_wrapper" style={style}>
@@ -57,24 +75,21 @@ class RegisterForm extends React.Component {
         };
     }
 
-    // Update values when writing in a form
-    handleChange = (event) => {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
-        });
-    }
-
     // Reset form. if fullReset is false, only passwords will be reset.
     resetForm(fullReset) {
         if (fullReset) {
-            this.refs.reg_username.value = '';
+            this.setState({
+                username: '',
+                password: '',
+                confirmPassword: ''
+            });
         }
-        this.refs.reg_password.value = '';
-        this.refs.reg_confirm_password.value = '';
+        else {
+            this.setState({
+                password: '',
+                confirmPassword: ''
+            });
+        }
     }
 
     // Validate a submission on client side. If fail, set states so that responseMessage will be shown.
@@ -135,30 +150,36 @@ class RegisterForm extends React.Component {
           <div>
               <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
                   <div className="input_form">
-                      <input
-                        ref="reg_username"
-                        type="text"
-                        name="username"
+                      <TextField
+                        onChange={e => this.setState({username: e.target.value})}
+                        value={this.state.username}
+                        style={styles.textField}
                         required
-                        placeholder="Username"
+                        inputStyle={styles.inputText}
+                        floatingLabelText="Username"
+                      />
+                  </div>
+
+                  <div className="input_form">
+                      <TextField
+                        onChange={e => this.setState({password: e.target.value})}
+                        value={this.state.password}
+                        type="password"
+                        required
+                        style={styles.textField}
+                        inputStyle={styles.inputText}
+                        floatingLabelText="Password"
                       />
                   </div>
                   <div className="input_form">
-                      <input
-                        ref="reg_password"
+                      <TextField
+                        onChange={e => this.setState({confirmPassword: e.target.value})}
+                        value={this.state.confirmPassword}
                         type="password"
-                        name="password"
                         required
-                        placeholder="Password"
-                      />
-                  </div>
-                  <div className="input_form">
-                      <input
-                        ref="reg_confirm_password"
-                        type="password"
-                        name="confirmPassword"
-                        required
-                        placeholder="Confirm password"
+                        style={styles.textField}
+                        inputStyle={styles.inputText}
+                        floatingLabelText="Confirm password"
                       />
                   </div>
                   <button className="submit">Submit</button>
@@ -186,24 +207,12 @@ class LoginForm extends React.Component {
         };
     }
 
-    // Update values when writing in a form
-    handleChange = (event) => {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
 
+    // Reset form.
+    resetForm() {
         this.setState({
-            [name]: value
-
+            password: '',
         });
-    }
-
-    // Reset form. if fullReset is false, only passwords will be reset.
-    resetForm(fullReset) {
-        if (fullReset) {
-            this.refs.login_username.value = '';
-        }
-        this.refs.login_password.value = '';
     }
 
     // Validate a submission on client side. If fail, set states so that responseMessage will be shown.
@@ -274,21 +283,24 @@ class LoginForm extends React.Component {
           <div>
               <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
                   <div className="input_form">
-                      <input
-                        ref="login_username"
-                        type="text"
-                        name="username"
+                      <TextField
+                        onChange={e => this.setState({username: e.target.value})}
+                        value={this.state.username}
+                        style={styles.textField}
                         required
-                        placeholder="Username"
+                        inputStyle={styles.inputText}
+                        floatingLabelText="Username"
                       />
                   </div>
                   <div className="input_form">
-                      <input
-                        ref="login_password"
+                      <TextField
+                        onChange={e => this.setState({password: e.target.value})}
+                        value={this.state.password}
                         type="password"
-                        name="password"
                         required
-                        placeholder="Password"
+                        style={styles.textField}
+                        inputStyle={styles.inputText}
+                        floatingLabelText="Password"
                       />
                   </div>
                   <button className="submit">Submit</button>

@@ -30,7 +30,7 @@ class Header extends Component {
 
         return (
           <div className="header">
-              <Link to='/'>
+              <Link to={{pathname: '/dashboard', state: {username: this.props.user}}}>
                   <img src={logo} className="logo" alt="logo"/>
                   <div className="logo_text"> Project Name</div>
               </Link>
