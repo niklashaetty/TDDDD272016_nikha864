@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {Router, Route, browserHistory, IndexRoute} from 'react-router';
-import createHistory from 'history/createBrowserHistory'
 
 // Error components
 import {NotFound} from './components/errorpages'
