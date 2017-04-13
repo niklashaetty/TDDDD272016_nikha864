@@ -8,6 +8,7 @@ import bcrypt  # Bcrypt for hashing
 from flask_cors import CORS, cross_origin
 
 import server.models as models
+import server.mongomodels as mongodb
 app = Flask(__name__)
 CORS(app)
 
@@ -151,6 +152,33 @@ def get_plan_data():
                        owner='test_owner',
                        username=username,
                        allow_edit=False)
+
+    # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/get_plan', methods=['POST'])
+def get_course_plan():
+    """
+    Get a course plan with a provided hash
+    :return: 
+    """
+    jwt = request.form['token']
+    plan_hash = request.form['plan_hash']  # user plan hash to retrieve real data later on.
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        plan = mongodb.get_course_plan(plan_hash)
+        if plan:
+            return jsonify(success=True,
+                           message='Successfully retrieved plan',
+                           plan=plan)
+        else:
+            return jsonify(success=False,
+                           message='No such plan')
 
     # Token provided was not valid
     else:
