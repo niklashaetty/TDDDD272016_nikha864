@@ -2,26 +2,164 @@
 ------PLANS
 {
     "_id" : 1,
+    "name": "name of courseplan",
     "owner" : "niklas",
     "semesters" : [
         {
-            "semester": "2016HT",
-            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
-            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+            "semester": "VT 2016",
+            "period1" : [
+                {
+                        "block": 1, 
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 1, 
+                        "code": "TDDD02", 
+                        "name": "Testcourse 102", 
+                        "points": "6",
+                        "level": "A"
+                    },
+                    {
+                        "block": 2, 
+                        "code": "TDDD03", 
+                        "name": "Testcourse 103", 
+                        "points": "6",
+                        "level": "G2"
+                    }
+                ],
+            "period2":[
+                    {
+                        "block": 1, 
+                        "code": "TDDD04", 
+                        "name": "Testcourse name is a bit long", 
+                        "points": "6",
+                        "level": "G2"
+                    },
+                    {
+                        "block": 2,
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 4, 
+                        "code": "TDDD05", 
+                        "name": "Testcourse 105", 
+                        "points": "4",
+                        "level": "A"
+                    }
+                ]
+
         },
         {
-            "semester": "2016HT",
-            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
-            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+            "semester": "HT 2016",
+            "period1" : [
+                {
+                        "block": 1, 
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 1, 
+                        "code": "TDDD02", 
+                        "name": "Testcourse 102", 
+                        "points": "6",
+                        "level": "A"
+                    },
+                    {
+                        "block": 2, 
+                        "code": "TDDD03", 
+                        "name": "Testcourse 103", 
+                        "points": "6",
+                        "level": "G2"
+                    }
+                ],
+            "period2":[
+                    {
+                        "block": 1, 
+                        "code": "TDDD04", 
+                        "name": "Testcourse name is a bit long", 
+                        "points": "6",
+                        "level": "G2"
+                    },
+                    {
+                        "block": 2,
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 4, 
+                        "code": "TDDD05", 
+                        "name": "Testcourse 105", 
+                        "points": "4",
+                        "level": "A"
+                    }
+                ]
+
         },
         {
-            "semester": "2016HT",
-            "period1" : ["TDDD01", "TDDD02", "TDDD03"],
-            "period2" : ["TDDD03", "TDDD04", "TDDD04"]
+            "semester": "VT 2017",
+            "period1" : [
+                {
+                        "block": 1, 
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 1, 
+                        "code": "TDDD02", 
+                        "name": "Testcourse 102", 
+                        "points": "6",
+                        "level": "A"
+                    },
+                    {
+                        "block": 2, 
+                        "code": "TDDD03", 
+                        "name": "Testcourse 103", 
+                        "points": "6",
+                        "level": "G2"
+                    }
+                ],
+            "period2":[
+                    {
+                        "block": 1, 
+                        "code": "TDDD04", 
+                        "name": "Testcourse name is a bit long", 
+                        "points": "6",
+                        "level": "G2"
+                    },
+                    {
+                        "block": 2,
+                        "code": "TDDD01", 
+                        "name": "Testcourse 101", 
+                        "points": "6*",
+                        "level": "A"
+                    },
+                    {
+                        "block": 4, 
+                        "code": "TDDD05", 
+                        "name": "Testcourse 105", 
+                        "points": "4",
+                        "level": "A"
+                    }
+                ]
+
         },
+                    
+        ],
 
-
-    ]
+    "ects" : 78,
+    "advanced_ects": 42
 }
 
 
@@ -32,7 +170,8 @@
     "name": "Testcourse 1",
     "periods" : ["HT1", "HT2"],
     "hp": 6,
-    "blocks": [2,4]
+    "blocks": [2,4],
+    "level": "A"
 }
 
 -----USERS
