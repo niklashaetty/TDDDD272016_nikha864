@@ -39,6 +39,7 @@ class Routes extends React.Component {
               <Route path="/users/:id" component={Login}/>
               <Route path="/dashboard" components={Dashboard} onEnter={this.requireAuth}/>
               <Route path="/p/:plan_hash" components={CoursePlan} />
+              <Route path="/NOT_FOUND/" component={NotFound} />
               <Route path="*" component={NotFound}/>
           </Router>
         );
