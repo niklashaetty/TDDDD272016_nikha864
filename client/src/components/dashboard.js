@@ -45,7 +45,6 @@ class PlannerLink extends Component {
           <div className="planner_link">
               <Divider style={{backgroundColor: '#F2F8FA'}}/>
               <a onClick={this.openPlan} className="link_name">{this.props.name}</a>
-
           </div>
         );
     }
@@ -55,7 +54,7 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            openDialog: false
+            openDialog: false,
         };
     }
 
@@ -68,6 +67,22 @@ class Dashboard extends Component {
 
     handleCloseDialog = () => {
         this.setState({openDialog: false});
+    };
+
+    async deleteUser (){
+
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/delete_user', {
+            method: 'post',
+            body: payload
+        });
+
+        let response = await request.json();
+        if(response.success){
+            Auth.logOut();
+            browserHistory.push('/');
+        }
     };
 
     // Test function to fill course plans
@@ -104,7 +119,7 @@ class Dashboard extends Component {
             <FlatButton
               label="Delete"
               primary={true}
-              onTouchTap={this.handleCloseDialog}
+              onTouchTap={this.deleteUser}
             />,
         ];
 
@@ -149,7 +164,8 @@ class Dashboard extends Component {
                               <div className="field">
                               </div>
                               <div className="field">
-                                  <Link onClick={() => {Auth.logOut()}} to={{pathname: '/'}}>
+                                  <Link onClick={() => {Auth.logOut()}}
+                                        to={{pathname: '/'}} >
                                       <RaisedButton
                                         target="_blank"
                                         label="Log out"
@@ -157,7 +173,6 @@ class Dashboard extends Component {
                                       />
                                   </Link>
                               </div>
-
 
                               <div className="field">
                                   <RaisedButton
