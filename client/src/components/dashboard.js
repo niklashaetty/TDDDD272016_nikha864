@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import FontAwesome from 'react-fontawesome';
 import {Link} from 'react-router';
 import {browserHistory} from 'react-router';
 
@@ -35,9 +34,19 @@ const styles = {
 };
 
 class PlannerLink extends Component {
+        constructor(props) {
+        super(props);
+        this.state = {
+            username: this.props.username,
+        };
+    }
+
     openPlan = () => {
         let planPath = '/p/' + this.props.plan_hash;
-        browserHistory.push(planPath);
+        browserHistory.push({
+            pathname: planPath,
+            state: {username: this.state.username}
+        });
     };
 
     render() {
@@ -55,6 +64,7 @@ class Dashboard extends Component {
         super(props);
         this.state = {
             openDialog: false,
+            username: this.props.location.state.username
         };
     }
 
@@ -88,16 +98,16 @@ class Dashboard extends Component {
     // Test function to fill course plans
     fillCourseplans () {
         var plans = [
-            {name: 'testplan1', owner: 'niklas', plan_hash: 'abcdef'},
-            {name: 'testplan2', owner: 'niklas', plan_hash: 'abcdeff'},
-            {name: 'testplan3', owner: 'niklas', plan_hash: 'abcdefff'},
-            {name: 'testplan4', owner: 'niklas', plan_hash: 'abcdeffff'},
-            {name: 'testplan5', owner: 'niklas', plan_hash: 'abcdefffff'},
-            {name: 'testplan6', owner: 'niklas', plan_hash: 'abcdeffffff'},
-            {name: 'testplan7', owner: 'niklas', plan_hash: 'abcdefffffff'},
-            {name: 'testplan8', owner: 'niklas', plan_hash: 'abcdeffffffff'},
-            {name: 'testplan9', owner: 'niklas', plan_hash: 'abcdefffffffff'},
-            {name: 'testplan10', owner: 'niklas', plan_hash: 'abcdeffffffffff'}
+            {name: 'testplan1', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan2', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan3', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan4', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan5', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan6', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan7', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan8', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan9', owner: 'niklas', plan_hash: 'testhash'},
+            {name: 'testplan10', owner: 'niklas', plan_hash: 'testhash'}
         ];
 
         let result = [];
@@ -127,7 +137,7 @@ class Dashboard extends Component {
         return (
 
           <div>
-              <Header user={this.props.location.state.username}/>
+              <Header user={this.state.username}/>
               <div className="toppadding100"> </div>
               <div className="content_wrapper">
 
