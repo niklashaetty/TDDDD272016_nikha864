@@ -65,7 +65,7 @@ class CoursePlan extends Component {
         let planDataResponse = await this.getPlanData(planHash);
 
         // If plan data could not be found, push the user to 404 page
-        // (NOT_FOUND is not a real link, but routing will take care of it)
+        // (NOT_FOUND will render NotFound component)
         if(!planDataResponse.success){
             browserHistory.push('/NOT_FOUND');
         }
