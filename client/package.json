@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "hint.css": "^2.4.1",
     "history": "^3.3.0",
     "material-ui": "^0.17.3",
     "react": "^15.4.2",
