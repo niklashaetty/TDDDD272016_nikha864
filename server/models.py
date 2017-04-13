@@ -11,9 +11,6 @@ import datetime
 
 import jwt
 
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
-
 TWO_HOURS = 7200
 
 
@@ -31,10 +28,8 @@ def connect():
     """
     Decide here if you want to connect using environment var or config file.
     """
-    return connect_cfg()  # Using cfg file
-
-
-#   return connect_env()   # Using Env var
+    # return connect_cfg()  # Using cfg file
+    return connect_env()   # Using Env var
 
 
 def connect_env():
@@ -95,12 +90,26 @@ class User:
             print(e)
             return False
 
+    def delete_user(self):
+        """
+        Delete a user from the database
+        :return: Bool success
+        """
+        conn = connect()
+        cur = conn.cursor()
+        query = 'delete from users where username = %s'
+        try:
+            cur.execute(query, (self.username,))
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     def issue_token(self, expiration=TWO_HOURS):
         """
         Generate a token with timestamp and expiration.
         """
-        cfg = load_config()
-        secret_key = cfg['keys']['secret_key']
+        secret_key = os.environ.get('SECRET_KEY')
         token = jwt.encode(
             {'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=expiration),
              'username': self.username},
@@ -150,9 +159,7 @@ def is_valid_token(jwt_encoded):
     Decode a token and check its validity
     """
 
-    # Load config
-    cfg = load_config()
-    secret_key = cfg['keys']['secret_key']
+    secret_key = os.environ.get('SECRET_KEY')
 
     if jwt_encoded is not None:
         try:
