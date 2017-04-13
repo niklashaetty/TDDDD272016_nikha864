@@ -1,7 +1,7 @@
 /* Contains all routing logic */
 
 import React from 'react';
-import {Router, Route, browserHistory, IndexRoute} from 'react-router';
+import {Router, Route, browserHistory} from 'react-router';
 
 // Error components
 import {NotFound} from './components/errorpages'

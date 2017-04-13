@@ -1,9 +1,7 @@
 /* Components related to the home page such as the register and login forms */
 
 import React, {Component} from 'react';
-import {RouteTransition} from 'react-router-transition';
 import {browserHistory} from 'react-router';
-import FontAwesome from 'react-fontawesome';
 import '../css/header.css';
 import '../css/home.css';
 import '../index.css';

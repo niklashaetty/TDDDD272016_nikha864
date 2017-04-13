@@ -7,7 +7,6 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import logo from '../img/logo.svg';
 import '../css/header.css';
-import Auth from './auth';
 import FontAwesome from 'react-fontawesome';
 
 class Header extends Component {

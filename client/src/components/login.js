@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import FontAwesome from 'react-fontawesome'
 
 class Login extends Component {
     render() {
