@@ -138,7 +138,7 @@ class RegisterForm extends React.Component {
         let payload = new FormData();
         payload.append("username", this.state.username);
         payload.append("password", this.state.password);
-        const response = await fetch('/register', {
+        const response = await fetch('https://tddd27-nikha864-backend.herokuapp.com/register', {
             method: 'post',
             body: payload
         });
@@ -270,7 +270,7 @@ class LoginForm extends React.Component {
         let payload = new FormData();
         payload.append("username", this.state.username);
         payload.append("password", this.state.password);
-        const response = await fetch('/login', {
+        const response = await fetch('https://tddd27-nikha864-backend.herokuapp.com/login', {
             method: 'post',
             body: payload
         });

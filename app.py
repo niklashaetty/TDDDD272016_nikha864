@@ -1,13 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 from flask import Flask, request, jsonify  # Flask modules
 import json
 import bcrypt  # Bcrypt for hashing
+from flask_cors import CORS, cross_origin
 
 import server.models as models
-
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
@@ -85,6 +87,30 @@ def login_user():
                    token=token.decode('utf-8'))
 
 
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    """
+    Delete a user.
+    """
+    jwt = request.form['token']
+
+    # Validate token
+    decoded_jwt = models.is_valid_token(jwt)
+    if decoded_jwt:
+        username = decoded_jwt['username']
+        user = models.User.get_user(username)
+        user_deleted = user.delete_user()
+        if user_deleted:
+            return jsonify(success=True,
+                           message='Successfully deleted user')
+        else:
+            return jsonify(success=False,
+                           message='Unknown database error')
+
+    return jsonify(success=False,
+                   message='Session is not valid')
+
+
 @app.route('/get_username', methods=['POST'])
 def get_username():
     """
@@ -120,7 +146,6 @@ def get_plan_data():
     decoded_jwt = models.is_valid_token(jwt)
     if decoded_jwt:
         username = decoded_jwt['username']
-        print('truefff')
         return jsonify(success=True,
                        message='Successfully retrieved plan meta data',
                        owner='test_owner',
@@ -163,4 +188,5 @@ def validate_user_data(username, plain_password):
 
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

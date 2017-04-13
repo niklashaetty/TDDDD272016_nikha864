@@ -29,7 +29,7 @@ module.exports = {
         let token = this.getToken();
         let payload = new FormData();
         payload.append("token", token);
-        let response = await fetch('/get_username', {
+        let response = await fetch('https://tddd27-nikha864-backend.herokuapp.com/get_username', {
             method: 'post',
             body: payload
         });
