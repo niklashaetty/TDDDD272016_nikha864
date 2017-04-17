@@ -40,11 +40,12 @@ const styles = {
 class CourseDashBoard extends Component {
     constructor(props) {
         super(props);
+        this.deleteCoursePlan = this.deleteCoursePlan.bind(this);
         this.state = {
             openDialog: false,
             maxAdvancedECTS: 60,
             maxECTS: 90,
-            scheduleConflict: true
+            scheduleConflict: true,
         };
     }
 
@@ -57,6 +58,32 @@ class CourseDashBoard extends Component {
         this.setState({openDialog: false});
     };
 
+    // Send a request to the server to delete a course plan
+    async deleteCoursePlan() {
+        let planHash = window.location.href.substring(window.location.href.lastIndexOf('/')+1);
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", planHash);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/delete_plan', {
+            method: 'post',
+            body: payload
+        });
+        let response = await request.json();
+
+        console.log(response.message);
+        // Deletion successful, push user back to dashboard!
+        if(response.success){
+            browserHistory.push({
+            pathname: '/dashboard',
+            state: {username: this.props.username}
+        });
+        }
+
+        // TODO: IN CASE DELETION FAILED; FIX
+
+    };
+
+    // Define action for the dialog buttons
     defineActions() {
         return [
             <FlatButton
@@ -67,7 +94,7 @@ class CourseDashBoard extends Component {
             <FlatButton
               label="Delete"
               primary={true}
-              onTouchTap={this.handleCloseDialog}
+              onTouchTap={this.deleteCoursePlan}
             />,
         ];
     }
@@ -105,7 +132,7 @@ class CourseDashBoard extends Component {
             scheduleConflict =
               <span className="hint--top hint--warning hint--rounded hint--large" aria-label="You have scheduling conflicts. This means two courses run on the same block, at the same time.">
                   <div className="field">
-                        {scheduleConflictIcon} Advanced ETCS points: {this.props.advancedECTS}/{this.state.maxAdvancedECTS}
+                        {scheduleConflictIcon} You have scheduling conflicts
                   </div>
               </span>;
         }
@@ -329,8 +356,6 @@ class CoursePlan extends Component {
 
     async componentWillMount() {
         let coursePlan = await this.getCoursePlan();
-        console.log(coursePlan);
-        console.log(coursePlan.advanced_ects);
         let username = await Auth.getUsername();
         this.setState({
             username: username,
@@ -399,7 +424,7 @@ class CoursePlan extends Component {
                       {semesterBoxes}
 
                       <div className="lowest_wrapper">
-                          <CourseDashBoard allowEdit={this.state.allowEdit} owner={this.state.planOwner} ects={this.state.ECTS} advancedECTS={this.state.advancedECTS} />
+                          <CourseDashBoard username={this.state.username} allowEdit={this.state.allowEdit} owner={this.state.planOwner} ects={this.state.ECTS} advancedECTS={this.state.advancedECTS} />
                       </div>
                   </div>
               </div>

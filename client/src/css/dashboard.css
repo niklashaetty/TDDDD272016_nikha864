@@ -11,7 +11,6 @@
   font-size: 11px;
   color: #77898C;
   font-family: 'Libre Franklin', sans-serif;
-  padding: 0 0 0 5px;
   margin: 0;
 }
 
@@ -43,11 +42,20 @@ height: 23px;
 }
 
 .planner_link:hover{
-  background-color: #F2F8FA;
   cursor: pointer;
 }
 
+.new_plan_wrapper{
+  width: 300px;
+  margin:auto;
+}
+
+.plan_text_field{
+  float:left;
+  width: 160px;
+}
+
 .button_div{
-  margin: auto;
+  float:left;
   width: 140px;
 }
