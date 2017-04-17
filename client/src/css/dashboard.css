@@ -13,8 +13,23 @@
   font-family: 'Libre Franklin', sans-serif;
   padding: 0 0 0 5px;
   margin: 0;
+}
 
+.info_text{
+  float:left;
+  text-align: left;
+  width: 99%;
+  height: 23px;
+  line-height: 23px;
+  font-size: 11px;
+  color: #77898C;
+  font-family: 'Libre Franklin', sans-serif;
+  padding: 0 0 0 5px;
+  margin: 0;
+}
 
+.course_plans{
+  height: 235px;
 }
 
 .link_name:hover {
