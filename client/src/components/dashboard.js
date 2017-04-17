@@ -14,6 +14,8 @@ import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import CircularProgress from 'material-ui/CircularProgress';
+import TextField from 'material-ui/TextField';
+import Snackbar from 'material-ui/Snackbar';
 
 // Components
 import Header from './header';
@@ -34,6 +36,9 @@ const styles = {
     }
 };
 
+/*
+ This component is simply one link to a course plan.
+ */
 class PlannerLink extends Component {
     constructor(props) {
         super(props);
@@ -60,14 +65,21 @@ class PlannerLink extends Component {
     }
 }
 
+/*
+ Main Dashboard component. Handles rendering of the dashboard as a whole
+ */
 class Dashboard extends Component {
     constructor(props) {
         super(props);
+        this.createNewPlan = this.createNewPlan.bind(this);
         this.state = {
             openDialog: false,
             username: this.props.location.state.username,
             plans: null,
-            loading: true
+            loading: true,
+            new_plan_name: '',
+            snackbarOpen: false,
+            snackbarMessage: ''
         };
     }
 
@@ -93,6 +105,45 @@ class Dashboard extends Component {
         this.setState({openDialog: false});
     };
 
+    /* Here is logic to handle the snackbar
+     that is used for feedback from plan creation
+     */
+    handleOpenSnackbar = () => {
+        this.setState({
+            snackbarOpen: true,
+        });
+    };
+
+    handleRequestCloseSnackbar = () => {
+        this.setState({
+            snackbarOpen: false,
+        });
+    };
+
+    // Send a request to the server to create a new, template(empty) course plan.
+    async createNewPlan(event) {
+        event.preventDefault();
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("name", this.state.new_plan_name);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/create_plan', {
+            method: 'post',
+            body: payload
+        });
+
+        let response = await request.json();
+        if(response.success){
+            // Re-render course plans to update the new one
+            this.componentDidMount();
+        }
+
+        this.handleOpenSnackbar();
+        this.setState({
+            new_plan_name: '',
+            snackbarMessage: response.message
+        });
+    }
+
     // Send a delete request to the server. If successful we'll log out the user as well
     async deleteUser (){
         let payload = new FormData();
@@ -111,7 +162,6 @@ class Dashboard extends Component {
 
     // Get course plans given a owner (represented by a token) from the server
     async getCoursePlans () {
-
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/get_all_plans', {
@@ -125,11 +175,8 @@ class Dashboard extends Component {
     fillCoursePlans(){
         let result = [];
         let plans = this.state.plans;
-        console.log(plans);
         if(plans.length > 0) {
             for (let i = 0; i < plans.length; i++) {
-                console.log(plans[i].name);
-                console.log(plans[i].plan_hash);
                 result.push(<PlannerLink name={plans[i].name} plan_hash={plans[i].plan_hash}/>)
             }
         }
@@ -181,16 +228,29 @@ class Dashboard extends Component {
 
                       <div className="upper_left_wrapper">
                           <div className="box_headline"> My course plans</div>
-                          <div className="box_content">
+                          <div className="box_content padding-5">
                               <div className="course_plans">
                                   {coursePlans}
                               </div>
-                              <div className="button_div">
-                                  <RaisedButton
-                                    target="_blank"
-                                    label="Create new"
-                                    style={styles.button_small}
-                                  />
+                              <div className="new_plan_wrapper">
+                                  <div className="plan_text_field">
+                                      <TextField
+                                        onChange={e => this.setState({new_plan_name: e.target.value})}
+                                        style={{width: 140, marginTop: -10, fontSize: 12}}
+                                        value={this.state.new_plan_name}
+                                        hintText="Name"
+                                        inputStyle={{color: '#595959'}}
+                                      />
+                                  </div>
+                                  <div className="button_div">
+
+                                      <RaisedButton
+                                        target="_blank"
+                                        label="Create new"
+                                        style={styles.button_small}
+                                        onTouchTap={this.createNewPlan}
+                                      />
+                                  </div>
                               </div>
                           </div>
                       </div>
@@ -248,6 +308,13 @@ class Dashboard extends Component {
                       </div>
                   </div>
 
+
+                  <Snackbar
+                    open={this.state.snackbarOpen}
+                    message={this.state.snackbarMessage}
+                    autoHideDuration={4000}
+                    onRequestClose={this.handleRequestCloseSnackbar}
+                  />
               </div>
             );
         }

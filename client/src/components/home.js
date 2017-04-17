@@ -237,7 +237,6 @@ class LoginForm extends React.Component {
 
             // Server accepted loginRequest. Store token and push client to dashboard.
             if (loginResponse.success) {
-                console.log('loggin in: ' + this.state.username + '\n' + 'token is: ' + loginResponse.token);
                 Auth.login(loginResponse.token);
                 browserHistory.push({
                     pathname: '/dashboard',
