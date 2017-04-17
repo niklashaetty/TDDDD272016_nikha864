@@ -20,3 +20,20 @@ export class NotFound extends Component {
         );
     }
 }
+
+export class CoursePlanNotFound extends Component {
+    render() {
+        return (
+          <div>
+              <Header />
+              <div className="error_page">
+                  <p className="not_found_big"> 404 </p>
+                  <p className="not_found_small"> Sorry, this course plan does not exist</p>
+                  <Link to="/">
+                      <button className="submit">Go home</button>
+                  </Link>
+              </div>
+          </div>
+        );
+    }
+}
