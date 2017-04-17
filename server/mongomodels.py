@@ -57,7 +57,13 @@ def add_course_plan(plan_hash, name, owner, total_ects, advanced_ects, semesters
         'advanced_ects': advanced_ects
     }
 
-    collection.insert(cmd)
+    try:
+        collection.insert(cmd)
+        return True
+
+    except Exception as e:
+        print(e)
+        return False
 
 
 def get_course_plan(plan_hash):
@@ -69,3 +75,20 @@ def get_course_plan(plan_hash):
     collection = get_collection()
     course_plan = collection.find_one({'plan_hash': plan_hash}, {'_id': 0})
     return course_plan
+
+
+def get_all_plans(owner):
+    """
+    Query the database and get all plans owner by user.
+    :param owner: a username
+    :return: list of plan metadata containing name, plan_hash.                     
+    """
+
+    collection = get_collection()
+    cursor = collection.find({'owner': owner}, {'plan_hash': 1, 'name': 1, '_id': 0})
+
+    course_plans = []
+    for plan in cursor:
+        course_plans.append(plan)
+
+    return course_plans

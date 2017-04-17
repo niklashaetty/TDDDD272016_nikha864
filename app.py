@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify  # Flask modules
 import json
 import bcrypt  # Bcrypt for hashing
 from flask_cors import CORS, cross_origin
+import random
 
 import server.models as models
 import server.mongomodels as mongodb
@@ -186,8 +187,78 @@ def get_course_plan():
                        message='Token is not valid')
 
 
+@app.route('/create_plan', methods=['POST'])
+def create_course_plan():
+    """
+    Create a course plan and return a unique hash identifier to the plan.
+    :return: Status and if successful, a unique identifier.
+    """
+
+    jwt = request.form['token']
+    name = request.form['name']
+
+    # Validate token and add create new, empty course plan.
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        owner = valid_token['username']
+        identifier = generate_identifier()
+        added_course_plan = mongodb.add_course_plan(identifier,
+                                                    name,
+                                                    owner,
+                                                    total_ects=0,
+                                                    advanced_ects=0,
+                                                    semesters=[])
+
+        # Check that everything went ok
+        if added_course_plan:
+            return jsonify(success=True,
+                           message='Course plan successfully created',
+                           identifier=identifier)
+
+        else:
+            return jsonify(success=False,
+                           message='Unknown database error')
+
+    # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/get_all_plans', methods=['POST'])
+def get_all_plans():
+    jwt = request.form['token']
+
+    # Validate token and return meta data from course plans
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        username = valid_token['username']
+        course_plans = mongodb.get_all_plans(username)
+
+        return jsonify(success=True,
+                       message='Successfully retrieved all course plans for {0}'.format(username),
+                       course_plans=course_plans)
+
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
 def generate_hash(plain_password):
     return bcrypt.hashpw(plain_password.encode('utf-8'), bcrypt.gensalt())
+
+
+def generate_identifier():
+    """
+    Generate a random string of 8 characters.
+    :return: 
+    """
+    alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    chars = []
+    for i in range(8):
+        chars.append(random.choice(alphabet))
+
+    return "".join(chars)
 
 
 def validate_user_data(username, plain_password):
