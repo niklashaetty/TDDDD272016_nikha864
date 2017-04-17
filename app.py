@@ -103,6 +103,7 @@ def delete_user():
         user = models.User.get_user(username)
         user_deleted = user.delete_user()
         if user_deleted:
+            mongodb.delete_all_course_plans(username)  # Delete all course plans of deleted user
             return jsonify(success=True,
                            message='Successfully deleted user')
         else:
@@ -197,11 +198,21 @@ def create_course_plan():
     jwt = request.form['token']
     name = request.form['name']
 
+    # Set max plans here
+    max_plans = 10
+
     # Validate token and add create new, empty course plan.
     valid_token = models.is_valid_token(jwt)
     if valid_token:
         owner = valid_token['username']
         identifier = generate_identifier()
+
+        # You can only have 10 plans
+        if len(mongodb.get_all_plans(owner)) >= max_plans:
+            return jsonify(success=False,
+                           message='You cannot have more than {0} plans'.format(max_plans))
+
+        # Try adding a plan to the db
         added_course_plan = mongodb.add_course_plan(identifier,
                                                     name,
                                                     owner,
@@ -220,6 +231,36 @@ def create_course_plan():
                            message='Unknown database error')
 
     # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/delete_plan', methods=['POST'])
+def delete_course_plan():
+    """
+    Delete a course plan 
+    :return: Status and if successful, a unique identifier.
+    """
+
+    jwt = request.form['token']
+    identifier = request.form['identifier']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        owner = valid_token['username']
+        deleted_course_plan = mongodb.delete_course_plan(identifier, owner)
+
+        # Check if a plan was actually deleted
+        if deleted_course_plan:
+            return jsonify(success=True,
+                           message='Course plan successfully deleted')
+
+        else:
+            return jsonify(success=False,
+                           message='No such plan exists')
+
     else:
         return jsonify(success=False,
                        message='Token is not valid')

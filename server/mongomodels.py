@@ -92,3 +92,29 @@ def get_all_plans(owner):
         course_plans.append(plan)
 
     return course_plans
+
+
+def delete_course_plan(identifier, owner):
+    """
+    Delete a course plan from the database identifier and owner.
+    
+    :param identifier: identifier of a plan
+    :param owner: owner of the course plan
+    :return: Boolean success.             
+    """
+
+    collection = get_collection()
+    result = collection.delete_many({'plan_hash': identifier, 'owner': owner})
+
+    return result.deleted_count > 0
+
+
+def delete_all_course_plans(owner):
+    """
+    Delete all course plans of a owner. Tread carefully...
+    :param owner: poor guy getting all his plans deleted.
+    :return: Boolean success.             
+    """
+    collection = get_collection()
+    result = collection.delete_many({'owner': owner})
+    return result.deleted_count > 0
