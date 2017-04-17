@@ -167,25 +167,15 @@ def get_course_plan():
     Get a course plan with a provided hash
     :return: 
     """
-    jwt = request.form['token']
-    plan_hash = request.form['plan_hash']  # user plan hash to retrieve real data later on.
-
-    # Validate token
-    valid_token = models.is_valid_token(jwt)
-    if valid_token:
-        plan = mongodb.get_course_plan(plan_hash)
-        if plan:
-            return jsonify(success=True,
-                           message='Successfully retrieved plan',
-                           plan=plan)
-        else:
-            return jsonify(success=False,
-                           message='No such plan')
-
-    # Token provided was not valid
+    plan_hash = request.form['plan_hash']
+    plan = mongodb.get_course_plan(plan_hash)
+    if plan:
+        return jsonify(success=True,
+                       message='Successfully retrieved plan',
+                       plan=plan)
     else:
         return jsonify(success=False,
-                       message='Token is not valid')
+                       message='No such plan')
 
 
 @app.route('/create_plan', methods=['POST'])

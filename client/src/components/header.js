@@ -26,6 +26,16 @@ class Header extends Component {
               </div>;
 
         }
+        else{
+          display =
+              <div className="menu_right">
+                  <p className="menu_item">
+                      <Link to={{pathname: '/'}}>
+                          <FontAwesome name="user-o"/> Login
+                      </Link>
+                  </p>
+              </div>;
+        }
 
         return (
           <div className="header">

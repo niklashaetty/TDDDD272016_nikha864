@@ -24,6 +24,7 @@ import '../css/hint.css'; // Tooltips hint.css
 // Components
 import Header from './header';
 import Auth from './auth';
+import {CoursePlanNotFound} from './errorpages';
 
 const styles = {
     button: {
@@ -350,23 +351,37 @@ class CoursePlan extends Component {
             openDialog: false,
             loading: true,
             ECTS: 0,
-            advancedECTS: 0
+            advancedECTS: 0,
+            coursePlanDoesNotExists: false
         };
     }
 
     async componentWillMount() {
         let coursePlan = await this.getCoursePlan();
+        console.log(coursePlan);
         let username = await Auth.getUsername();
-        this.setState({
+
+        if(coursePlan.success){
+            this.setState({
             username: username,
-            allowEdit: coursePlan.owner === username,
-            planOwner: coursePlan.owner,
-            planHash: coursePlan.plan_hash,
-            ECTS: coursePlan.ects,
-            advancedECTS: coursePlan.advanced_ects,
-            plan: coursePlan,
+            allowEdit: coursePlan.plan.owner === username,
+            planOwner: coursePlan.plan.owner,
+            planHash: coursePlan.plan.plan_hash,
+            ECTS: coursePlan.plan.ects,
+            advancedECTS: coursePlan.plan.advanced_ects,
+            plan: coursePlan.plan,
             loading: false
         });
+        }
+
+        else{
+            this.setState({
+            username: username,
+            coursePlanDoesNotExists: true,
+            loading: false
+        });
+        }
+
     }
 
     /* Get the course plan of current link. Set meta dat */
@@ -377,27 +392,17 @@ class CoursePlan extends Component {
 
         // Send a request for plan
         let payload = new FormData();
-        payload.append("token", Auth.getToken());
         payload.append("plan_hash", planHash);
         const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/get_plan', {
             method: 'post',
             body: payload
         });
-        let response = await request.json();
-
-        // If plan data could not be found, push the user to 404 page
-        // (NOT_FOUND will render NotFound component)
-        if(!response.success){
-            browserHistory.push('/NOT_FOUND');
-        }
-
-        // Harvest props from the server response
-        else{
-            return response.plan
-        }
+        return await request.json();
     }
 
     render() {
+
+        // Show loading icon when loading
         if(this.state.loading){
             return(
               <div>
@@ -409,26 +414,40 @@ class CoursePlan extends Component {
         }
         else {
 
-            let test = this.state.plan;
-            let semesters = test.semesters;
-            let semesterBoxes = [];
-            for (let i = 0; i < semesters.length; i++) {
-                semesterBoxes.push(<Semester semesterIndex={i} semester={semesters[i]}/>)
-            }
-
-            return (
+            // If the course plan does not exist, render template showing that
+            if(this.state.coursePlanDoesNotExists){
+                return (
               <div>
-                  <Header user={this.state.username}/>
-                  <div className="toppadding100"> </div>
-                  <div className="content_wrapper">
-                      {semesterBoxes}
-
-                      <div className="lowest_wrapper">
-                          <CourseDashBoard username={this.state.username} allowEdit={this.state.allowEdit} owner={this.state.planOwner} ects={this.state.ECTS} advancedECTS={this.state.advancedECTS} />
-                      </div>
-                  </div>
+                      <CoursePlanNotFound/>
               </div>
             );
+            }
+
+            // But if we DO find a course plan, lets render it!
+            else {
+                let plan = this.state.plan;
+                let semesters = plan.semesters;
+                let semesterBoxes = [];
+                for (let i = 0; i < semesters.length; i++) {
+                    semesterBoxes.push(<Semester semesterIndex={i} semester={semesters[i]}/>)
+                }
+
+                return (
+                  <div>
+                      <Header user={this.state.username}/>
+                      <div className="toppadding100"></div>
+                      <div className="content_wrapper">
+                          {semesterBoxes}
+
+                          <div className="lowest_wrapper">
+                              <CourseDashBoard username={this.state.username} allowEdit={this.state.allowEdit}
+                                               owner={this.state.planOwner} ects={this.state.ECTS}
+                                               advancedECTS={this.state.advancedECTS}/>
+                          </div>
+                      </div>
+                  </div>
+                );
+            }
         }
     }
 
