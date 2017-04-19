@@ -1,9 +1,20 @@
-/* Contains error pages such as 404, 503 '*/
+/**
+ *  Contains error pages such as 404, 503
+ *
+ */
 import {Link} from 'react-router';
 import React, {Component} from 'react';
+
+// CSS
 import '../css/errorpages.css'
+
+// Components
 import Header from './header';
 
+
+/**
+ * Standard 404 page
+ */
 export class NotFound extends Component {
     render() {
         return (
@@ -21,6 +32,9 @@ export class NotFound extends Component {
     }
 }
 
+/**
+ * Course plan missing 404 page
+ */
 export class CoursePlanNotFound extends Component {
     render() {
         return (

@@ -1,14 +1,21 @@
+/** This module contains all components linked with the dashboard of a user
+ *
+ * PlannerLink:
+ *  Component that is just a simple link to a course plan, with name and hash.
+ *
+ * Dashboard:
+ *  The component that is responsible for rendering the dashboard
+ */
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {browserHistory} from 'react-router';
-
 
 // CSS
 import '../css/dashboard.css';
 import '../css/contentboxes.css';
 import '../index.css';
 
-//Material
+//Material UI
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
@@ -36,7 +43,7 @@ const styles = {
     }
 };
 
-/*
+/**
  This component is simply one link to a course plan.
  */
 class PlannerLink extends Component {
@@ -65,7 +72,7 @@ class PlannerLink extends Component {
     }
 }
 
-/*
+/**
  Main Dashboard component. Handles rendering of the dashboard as a whole
  */
 class Dashboard extends Component {

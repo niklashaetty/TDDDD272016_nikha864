@@ -1,6 +1,6 @@
-/*
+/**
  This module handle all authentication logic on the client side.
- */
+*/
 
 module.exports = {
     getToken () {

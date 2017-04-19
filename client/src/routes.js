@@ -1,4 +1,7 @@
-/* Contains all routing logic */
+/**
+ *  Contains all routing logic
+ *  Note! using React-router v3 and not v4
+ *  */
 
 import React from 'react';
 import {Router, Route, browserHistory} from 'react-router';

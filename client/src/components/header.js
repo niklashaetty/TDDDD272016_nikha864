@@ -1,16 +1,17 @@
-/* This is the header component which contains the header.
+/** This is the header component which contains the header.
  * When logged in the user state should be set to user name,
  * in which case the user name will be displayed in the top right
- * corner with a link to its dashboard.*/
-
+ * corner with a link to its dashboard.
+ */
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import logo from '../img/logo.svg';
+
+// CSS
 import '../css/header.css';
 import FontAwesome from 'react-fontawesome';
 
 class Header extends Component {
-
     render() {
         let display = null;
 

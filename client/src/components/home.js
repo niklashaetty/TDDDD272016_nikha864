@@ -1,20 +1,23 @@
-/* Components related to the home page such as the register and login forms */
-
+/** Components related to the home page such as the register and login forms
+ */
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
+
+// CSS
 import '../css/header.css';
 import '../css/home.css';
 import '../index.css';
-import Header from './header';
-import Auth from './auth';
 
 // Material UI
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 
+// Components
+import Header from './header';
+import Auth from './auth';
+
 // Inline styles for inputs
 const styles = {
-
     textField: {
         width: 340,
         marginTop: -15,
@@ -23,10 +26,11 @@ const styles = {
     inputText: {
         color: '#595959'
     }
-
 };
 
-// Show the result of a form, i.e feedback from registration
+/**
+ * This component renders the result of a form, i.e feedback from registration
+ */
 class FormResult extends React.Component {
     render() {
         let style;
@@ -57,7 +61,7 @@ class FormResult extends React.Component {
     }
 }
 
-// Register form on home page
+/** The register form */
 class RegisterForm extends React.Component {
     constructor(props) {
         super(props);
@@ -189,7 +193,7 @@ class RegisterForm extends React.Component {
     }
 }
 
-// Login form on home page
+/** The login form */
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
@@ -255,9 +259,9 @@ class LoginForm extends React.Component {
             }
         }
 
-        // Reset only passwords when clientside validation fails for better user experience.
+        // Reset only passwords for better user experience.
         else {
-            this.resetForm(false);
+            this.resetForm();
         }
     }
 
@@ -307,7 +311,7 @@ class LoginForm extends React.Component {
     }
 }
 
-// Home class
+/** The home component that ties everything together and renders the entire home page*/
 class Home extends Component {
     constructor(props) {
         super(props);

@@ -1,19 +1,26 @@
 /**
- * Created by iinh on 4/11/17.
+ * This module contains all components related to rendering a course plan.
+ *
+ * CourseDashBoard:
+ *  The bottom component that provides feedback on a course plan
+ *
+ * Semester:
+ *  One semester component, contains the information of courses in one semester
+ *
+ * CoursePlan:
+ *  The main component that ties everything together.
+ *
  */
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
 
-
 // Material UI
 import FontIcon from 'material-ui/FontIcon';
 import LinearProgress from 'material-ui/LinearProgress';
-import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import CircularProgress from 'material-ui/CircularProgress';
-
 
 // CSS
 import '../css/contentboxes.css';
@@ -37,7 +44,8 @@ const styles = {
     }
 };
 
-// Dashboard for one course plan
+/** Dashboard for one course plan.
+ *  Renders feedback for a course plan. */
 class CourseDashBoard extends Component {
     constructor(props) {
         super(props);
@@ -75,9 +83,9 @@ class CourseDashBoard extends Component {
         // Deletion successful, push user back to dashboard!
         if(response.success){
             browserHistory.push({
-            pathname: '/dashboard',
-            state: {username: this.props.username}
-        });
+                pathname: '/dashboard',
+                state: {username: this.props.username}
+            });
         }
 
         // TODO: IN CASE DELETION FAILED; FIX
@@ -127,7 +135,7 @@ class CourseDashBoard extends Component {
         let ECTSIcon = (this.props.ects >= this.state.maxECTS) ? positiveIcon : negativeIcon;
         let scheduleConflictIcon = warningIcon; // TODO: FIX LOGIC
 
-        // If
+        // Check for scheduling conflicts
         let scheduleConflict;
         if(this.state.scheduleConflict){
             scheduleConflict =
@@ -140,10 +148,9 @@ class CourseDashBoard extends Component {
         else{
             scheduleConflict =
               <div className="field">
-                  {scheduleConflictIcon} Advanced ETCS points: {this.props.advancedECTS}/{this.state.maxAdvancedECTS}
+                  {scheduleConflictIcon} No scheduling conflicts!
               </div>
         }
-
 
         return(
           <div>
@@ -238,7 +245,7 @@ class CourseDashBoard extends Component {
     }
 }
 
-// One semester component
+/** Semester component with courses and box for ONE semester */
 class Semester extends Component {
     constructor(props) {
         super(props);
@@ -339,7 +346,7 @@ class Semester extends Component {
     }
 }
 
-// The entire course plan site component
+/** The main course plan component that renders an entire course plan*/
 class CoursePlan extends Component {
     constructor(props) {
         super(props);
@@ -363,23 +370,23 @@ class CoursePlan extends Component {
 
         if(coursePlan.success){
             this.setState({
-            username: username,
-            allowEdit: coursePlan.plan.owner === username,
-            planOwner: coursePlan.plan.owner,
-            planHash: coursePlan.plan.plan_hash,
-            ECTS: coursePlan.plan.ects,
-            advancedECTS: coursePlan.plan.advanced_ects,
-            plan: coursePlan.plan,
-            loading: false
-        });
+                username: username,
+                allowEdit: coursePlan.plan.owner === username,
+                planOwner: coursePlan.plan.owner,
+                planHash: coursePlan.plan.plan_hash,
+                ECTS: coursePlan.plan.ects,
+                advancedECTS: coursePlan.plan.advanced_ects,
+                plan: coursePlan.plan,
+                loading: false
+            });
         }
 
         else{
             this.setState({
-            username: username,
-            coursePlanDoesNotExists: true,
-            loading: false
-        });
+                username: username,
+                coursePlanDoesNotExists: true,
+                loading: false
+            });
         }
 
     }
@@ -417,10 +424,10 @@ class CoursePlan extends Component {
             // If the course plan does not exist, render template showing that
             if(this.state.coursePlanDoesNotExists){
                 return (
-              <div>
+                  <div>
                       <CoursePlanNotFound/>
-              </div>
-            );
+                  </div>
+                );
             }
 
             // But if we DO find a course plan, lets render it!
@@ -450,7 +457,6 @@ class CoursePlan extends Component {
             }
         }
     }
-
 }
 
 export default CoursePlan;

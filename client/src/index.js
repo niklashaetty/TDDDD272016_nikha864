@@ -20,6 +20,7 @@ const muiTheme = getMuiTheme({
 
 
 // Render whatever route we're at, see routes.js
+// Material-ui needs a theme to work, so we wrap everything thats being rendered in a theme.
 ReactDOM.render(<MuiThemeProvider muiTheme={muiTheme}><Routes/></MuiThemeProvider>, document.getElementById('root')
 
 );
