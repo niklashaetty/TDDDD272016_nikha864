@@ -46,7 +46,7 @@ const styles = {
 
 /** Dashboard for one course plan.
  *  Renders feedback for a course plan. */
-class CourseDashBoard extends Component {
+export class CourseDashBoard extends Component {
     constructor(props) {
         super(props);
         this.deleteCoursePlan = this.deleteCoursePlan.bind(this);
@@ -54,7 +54,7 @@ class CourseDashBoard extends Component {
             openDialog: false,
             maxAdvancedECTS: 60,
             maxECTS: 90,
-            scheduleConflict: true,
+            editMode: false
         };
     }
 
@@ -110,7 +110,6 @@ class CourseDashBoard extends Component {
 
     render() {
         let dialogActions = this.defineActions();
-        console.log(this.props.advancedECTS);
 
         // Define icons
         const positiveIcon = <FontIcon
@@ -133,11 +132,12 @@ class CourseDashBoard extends Component {
         // Check what type of icon should be displayed
         let advancedECTSIcon = (this.props.advancedECTS >= this.state.maxAdvancedECTS) ? positiveIcon : negativeIcon;
         let ECTSIcon = (this.props.ects >= this.state.maxECTS) ? positiveIcon : negativeIcon;
-        let scheduleConflictIcon = warningIcon; // TODO: FIX LOGIC
+        let scheduleConflictIcon = this.props.scheduleConflict ? warningIcon: positiveIcon;
 
         // Check for scheduling conflicts
+        console.log(this.props.scheduleConflict);
         let scheduleConflict;
-        if(this.state.scheduleConflict){
+        if(this.props.scheduleConflict){
             scheduleConflict =
               <span className="hint--top hint--warning hint--rounded hint--large" aria-label="You have scheduling conflicts. This means two courses run on the same block, at the same time.">
                   <div className="field">
@@ -191,17 +191,19 @@ class CourseDashBoard extends Component {
                   </div>
                   <div className="box_content_right">
                       <div className="field_small">
-                          Programme: {this.props.programme}
-                      </div>
-                      <div className="field_small">
-                          Profile: {this.props.profile}
-                      </div>
-                      <div className="field_small">
                           Course plan name: {this.props.name}
                       </div>
                       <div className="field_small">
                           Created by: {this.props.owner}
                       </div>
+                      <div className="field_small">
+                          Programme: {this.props.programme}
+                      </div>
+                      <div className="field_small">
+                          Profile: {this.props.profile}
+                      </div>
+
+
 
                       <div className="field">
 
@@ -279,11 +281,14 @@ class Semester extends Component {
         }
         this.setState({
             boxClassName: boxClassName,
-            semester: this.props.semester
+            semester: this.props.semester,
+            scheduleConflict: this.props.scheduleConflict
         });
     }
 
     render() {
+
+        // Table head
         let tableHead = <thead>
         <tr className="table_header">
             <td className="table_small">Block</td>
@@ -299,6 +304,9 @@ class Semester extends Component {
         </thead>;
 
         let row;
+
+
+        // Period 1
         let period1Rows = this.props.semester.period1.map(function(obj){
             row = <tr>
                 <td>{obj.block}</td>
@@ -310,6 +318,7 @@ class Semester extends Component {
             return row;
         });
 
+        // Period 2
         let period2Rows = this.props.semester.period2.map(function(obj){
             row = <tr>
                 <td>{obj.block}</td>
@@ -320,6 +329,14 @@ class Semester extends Component {
             </tr>;
             return row;
         });
+
+        // ScheduleConflict warning
+        const warningIcon = <FontIcon className="material-icons" style={{
+            fontSize: '14px',
+            color: '#ffbb40',
+            marginRight: 5
+        }}>error_outline</FontIcon>;
+        let scheduleConflictIcon = this.props.scheduleConflict ? warningIcon: null;
 
         return (
           <div className={this.state.boxClassName}>
@@ -339,7 +356,17 @@ class Semester extends Component {
                       </table>
 
                   </div>
-                  <div className="semester_summary"> Total ECTS points: {this.state.semester.ects}</div>
+                  <div className="semester_summary">
+                      <p className="semester_summary_ects">Total ECTS points: {this.state.semester.ects}</p>
+                  </div>
+                  <div className="semester_summary">
+                      <p className="semester_summary_ects">Total advanced ECTS points: {this.state.semester.advanced_ects}</p>
+                    <div className="warning_icon">
+                        <span className="hint--top hint--warning hint--rounded hint--medium" aria-label="This semester contains a scheduling conflict.">
+                            {scheduleConflictIcon}
+                        </span>
+                    </div>
+                  </div>
               </div>
           </div>
         );
@@ -407,6 +434,11 @@ class CoursePlan extends Component {
         return await request.json();
     }
 
+    /* Check if a semester has a scheduling conflict */
+    checkForScheduleConflict (semester){
+        return semester.schedule_conflict;
+    }
+
     render() {
 
         // Show loading icon when loading
@@ -434,22 +466,28 @@ class CoursePlan extends Component {
             else {
                 let plan = this.state.plan;
                 let semesters = plan.semesters;
+                let scheduleConflict = false; // init conflict to false
+                console.log(plan.schedule_conflict);
                 let semesterBoxes = [];
                 for (let i = 0; i < semesters.length; i++) {
-                    semesterBoxes.push(<Semester semesterIndex={i} semester={semesters[i]}/>)
+                    scheduleConflict = this.checkForScheduleConflict(semesters[i]);
+                    console.log("shed conflict:" + scheduleConflict);
+                    semesterBoxes.push(<Semester semesterIndex={i} semester={semesters[i]} scheduleConflict={scheduleConflict}/>)
                 }
 
                 return (
                   <div>
                       <Header user={this.state.username}/>
-                      <div className="toppadding100"></div>
+                      <div className="toppadding100"> </div>
                       <div className="content_wrapper">
                           {semesterBoxes}
 
                           <div className="lowest_wrapper">
-                              <CourseDashBoard username={this.state.username} allowEdit={this.state.allowEdit}
+                              <CourseDashBoard name={plan.name} scheduleConflict={scheduleConflict} username={this.state.username}
+                                               allowEdit={this.state.allowEdit} profile={plan.profile}
+                                               programme={plan.programme}
                                                owner={this.state.planOwner} ects={this.state.ECTS}
-                                               advancedECTS={this.state.advancedECTS}/>
+                                               advancedECTS={this.state.advancedECTS} editMode={false}/>
                           </div>
                       </div>
                   </div>

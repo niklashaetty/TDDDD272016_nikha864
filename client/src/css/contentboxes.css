@@ -1,7 +1,7 @@
 .content_wrapper{
 
   width: 1030px;
-  height: 800px;
+  height: 860px;
   margin: auto;
 }
 .toppadding100{
@@ -45,16 +45,16 @@
 
 .box_content_left{
   float: left;
-  width: 70%;
-  height: 175px;
+  width: 60%;
+  height: 165px;
     box-sizing: border-box;
   padding-left: 10px;
-  padding-right: 50px;
+  padding-right: 30px;
 }
 .box_content_right{
   float: left;
-  width: 30%;
-  height: 175px;
+  width: 40%;
+  height: 165px;
   box-sizing: border-box;
   padding-left: 10px;
 }

@@ -26,13 +26,30 @@
 }
 
 .semester_table{
-  height: 250px;
+  height: 235px;
 }
 .semester_summary{
   width: 100%;
-  height: 25px;
+  height: 15px;
   font-size: 10px;
   color: #8b9fa3;
   font-family: 'Roboto', sans-serif;
   display: inline-flex;
+}
+
+.semester_summary_ects{
+  width: 100%;
+  height: 21px;
+  font-size: 10px;
+  color: #8b9fa3;
+  font-family: 'Roboto', sans-serif;
+  display: inline-flex;
+  padding: 0;
+  margin: 0;
+}
+
+.warning_icon{
+  clear: both;
+  padding: 0;
+  float: right;
 }
