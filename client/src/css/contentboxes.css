@@ -87,6 +87,7 @@
   font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
 }
+
 .field_sidebyside{
   width: 50%;
   float:left;
@@ -173,4 +174,5 @@
   box-sizing: border-box;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
 }
+
 

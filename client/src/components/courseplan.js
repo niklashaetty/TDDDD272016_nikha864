@@ -54,7 +54,7 @@ export class CourseDashBoard extends Component {
             openDialog: false,
             maxAdvancedECTS: 60,
             maxECTS: 90,
-            editMode: false
+            editMode: this.props.editMode
         };
     }
 
@@ -65,6 +65,27 @@ export class CourseDashBoard extends Component {
 
     handleCloseDialog = () => {
         this.setState({openDialog: false});
+    };
+
+    // Handle opening of editor
+    openEditor = () => {
+        let path = "/p/" + this.props.planHash + "/edit";
+        browserHistory.push({
+            pathname: path,
+            state: {username: this.props.username,
+                planHash: this.props.planHash}
+        });
+
+    };
+
+    // Handle closing of editor
+    exitEditor = () => {
+        let path = "/p/" + this.props.planHash;
+        browserHistory.push({
+            pathname: path,
+            state: {username: this.props.username}
+        });
+
     };
 
     // Send a request to the server to delete a course plan
@@ -79,7 +100,6 @@ export class CourseDashBoard extends Component {
         });
         let response = await request.json();
 
-        console.log(response.message);
         // Deletion successful, push user back to dashboard!
         if(response.success){
             browserHistory.push({
@@ -135,21 +155,45 @@ export class CourseDashBoard extends Component {
         let scheduleConflictIcon = this.props.scheduleConflict ? warningIcon: positiveIcon;
 
         // Check for scheduling conflicts
-        console.log(this.props.scheduleConflict);
         let scheduleConflict;
         if(this.props.scheduleConflict){
             scheduleConflict =
-              <span className="hint--top hint--warning hint--rounded hint--large" aria-label="You have scheduling conflicts. This means two courses run on the same block, at the same time.">
+              <span className="hint--top hint--warning hint--rounded hint--large" aria-label="This plan contains scheduling conflicts. This means two courses run on the same block, at the same time.">
                   <div className="field">
-                        {scheduleConflictIcon} You have scheduling conflicts
+                        {scheduleConflictIcon} Scheduling conflicts
                   </div>
-              </span>;
+              </span>
         }
         else{
             scheduleConflict =
               <div className="field">
                   {scheduleConflictIcon} No scheduling conflicts!
               </div>
+        }
+
+        // Hide edit buttons if in editor mode
+        let editButton;
+        if(this.state.editMode){
+            editButton = <div className="field_sidebyside">
+                <RaisedButton
+                  target="_blank"
+                  label="Back"
+                  disabled={!this.props.allowEdit}
+                  style={styles.button}
+                  onTouchTap={this.exitEditor}
+                />
+            </div>;
+        }
+        else{
+            editButton = <div className="field_sidebyside">
+                <RaisedButton
+                  target="_blank"
+                  label="Edit"
+                  disabled={!this.props.allowEdit}
+                  style={styles.button}
+                  onTouchTap={this.openEditor}
+                />
+            </div>;
         }
 
         return(
@@ -203,22 +247,10 @@ export class CourseDashBoard extends Component {
                           Profile: {this.props.profile}
                       </div>
 
-
-
                       <div className="field">
-
                       </div>
 
-                      <div className="field_sidebyside">
-                          <RaisedButton
-                            target="_blank"
-                            label="Edit"
-                            disabled={!this.props.allowEdit}
-                            style={styles.button}
-                          />
-
-                      </div>
-
+                      {editButton}
                       <div className="field_sidebyside">
                           <RaisedButton
                             target="_blank"
@@ -361,11 +393,11 @@ class Semester extends Component {
                   </div>
                   <div className="semester_summary">
                       <p className="semester_summary_ects">Total advanced ECTS points: {this.state.semester.advanced_ects}</p>
-                    <div className="warning_icon">
+                      <div className="warning_icon">
                         <span className="hint--top hint--warning hint--rounded hint--medium" aria-label="This semester contains a scheduling conflict.">
                             {scheduleConflictIcon}
                         </span>
-                    </div>
+                      </div>
                   </div>
               </div>
           </div>
@@ -392,7 +424,6 @@ class CoursePlan extends Component {
 
     async componentWillMount() {
         let coursePlan = await this.getCoursePlan();
-        console.log(coursePlan);
         let username = await Auth.getUsername();
 
         if(coursePlan.success){
@@ -467,11 +498,9 @@ class CoursePlan extends Component {
                 let plan = this.state.plan;
                 let semesters = plan.semesters;
                 let scheduleConflict = false; // init conflict to false
-                console.log(plan.schedule_conflict);
                 let semesterBoxes = [];
                 for (let i = 0; i < semesters.length; i++) {
                     scheduleConflict = this.checkForScheduleConflict(semesters[i]);
-                    console.log("shed conflict:" + scheduleConflict);
                     semesterBoxes.push(<Semester semesterIndex={i} semester={semesters[i]} scheduleConflict={scheduleConflict}/>)
                 }
 
@@ -485,7 +514,7 @@ class CoursePlan extends Component {
                           <div className="lowest_wrapper">
                               <CourseDashBoard name={plan.name} scheduleConflict={scheduleConflict} username={this.state.username}
                                                allowEdit={this.state.allowEdit} profile={plan.profile}
-                                               programme={plan.programme}
+                                               programme={plan.programme} planHash={this.state.planHash}
                                                owner={this.state.planOwner} ects={this.state.ECTS}
                                                advancedECTS={this.state.advancedECTS} editMode={false}/>
                           </div>
