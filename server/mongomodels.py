@@ -31,19 +31,28 @@ def add_course_plan(plan_hash, name, owner, total_ects, advanced_ects, semesters
     :param total_ects: Total ects points
     :param semesters: List of semesters in json format, like this:
         {
-            "semester": "2016HT",
-            "period1" : {
-                "block1": ["TDDD02"],
-                "block2": ["TDDD03", "TDDD04"],
-                "block3": ["TDDD05"],
-                "block4": []
-            },
-            "period2": {
-                "block1": ["TDDD02"],
-                "block2": ["TDDD03", "TDDD04"],
-                "block3": ["TDDD05"],
-                "block4": []
-            }
+            "schedule_conflict": true,
+            "ects": 30,
+            "advanced_ects": 18,
+            "period1": [
+                {
+                    "points": "6*",
+                    "level": "A",
+                    "name": "Testcourse 101",
+                    "block": 1,
+                    "code": "TDDD01"
+                }
+            ],
+            "period2": [
+                {
+                    "points": "6",
+                    "level": "G2",
+                    "name": "Testcourse name is a bit long",
+                    "block": 1,
+                    "code": "TDDD04"
+                }
+            ],
+            "semester": "VT 2016"
         }
     """
     collection = get_collection()
@@ -64,6 +73,17 @@ def add_course_plan(plan_hash, name, owner, total_ects, advanced_ects, semesters
     except Exception as e:
         print(e)
         return False
+
+
+def get_course_plan_owner(plan_hash):
+    """
+    Return owner of a course plan with provided hash.
+    :param plan_hash: Unique plan identifier
+    :return: owner
+    """
+    collection = get_collection()
+    plan = collection.find_one({'plan_hash': plan_hash}, {'_id': 0, 'owner': 1})
+    return plan['owner']
 
 
 def get_course_plan(plan_hash):

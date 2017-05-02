@@ -162,12 +162,15 @@ def get_plan_data():
 
 
 @app.route('/get_plan', methods=['POST'])
-def get_course_plan():
+def get_course_plan_route():
+    plan_hash = request.form['plan_hash']
+    return get_course_plan(plan_hash)
+
+
+def get_course_plan(plan_hash):
     """
     Get a course plan with a provided hash
-    :return: 
     """
-    plan_hash = request.form['plan_hash']
     plan = mongodb.get_course_plan(plan_hash)
     if plan:
         return jsonify(success=True,
@@ -176,6 +179,34 @@ def get_course_plan():
     else:
         return jsonify(success=False,
                        message='No such plan')
+
+
+@app.route('/get_plan_editor', methods=['POST'])
+def get_course_plan_editor():
+    """
+    Get a course plan in editor mode, with a provided hash.
+    In short, validate that the user owns said plan before sending the course plan.
+    """
+    plan_hash = request.form['plan_hash']
+    jwt = request.form['token']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+
+        # Validate that user owns plan
+        print("Owner:  ", valid_token['username'], "realowner:", mongodb.get_course_plan_owner(plan_hash))
+        if valid_token['username'] == mongodb.get_course_plan_owner(plan_hash):
+            return get_course_plan(plan_hash)
+
+        else:
+            return jsonify(success=False,
+                           message='You are not the owner of this course plan')
+
+    # Token provided was not valid
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
 
 
 @app.route('/create_plan', methods=['POST'])
