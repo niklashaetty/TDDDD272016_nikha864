@@ -314,8 +314,7 @@ class Dashboard extends Component {
                           </div>
                       </div>
                   </div>
-
-
+                  
                   <Snackbar
                     open={this.state.snackbarOpen}
                     message={this.state.snackbarMessage}
