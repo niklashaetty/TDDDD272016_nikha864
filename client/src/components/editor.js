@@ -210,8 +210,9 @@ class CoursePlanEditor extends Component {
             return(
               <div>
                   <Header user={this.state.username}/>
-                  <div className="padding500"> </div>
-                  <CircularProgress size={80} thickness={1} />
+                  <div className="fullpage_loading">
+                  <CircularProgress size={50} thickness={2}/>
+                  </div>
               </div>
             )
         }
