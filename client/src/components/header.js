@@ -42,7 +42,7 @@ class Header extends Component {
           <div className="header">
               <Link to={{pathname: '/dashboard', state: {username: this.props.user}}}>
                   <img src={logo} className="logo" alt="logo"/>
-                  <div className="logo_text"> Project Name</div>
+                  <div className="logo_text"> Master course planner</div>
               </Link>
               <div className="menu_right">
                   {display}
