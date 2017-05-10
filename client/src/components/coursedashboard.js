@@ -4,13 +4,14 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
 
+// Material UI
 import FontIcon from 'material-ui/FontIcon';
 import LinearProgress from 'material-ui/LinearProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-
+// Components
 import Auth from './auth';
 
 const styles = {
