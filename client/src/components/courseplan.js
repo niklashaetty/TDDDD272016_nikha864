@@ -13,6 +13,7 @@ import '../css/contentboxes.css';
 import '../css/courseplan.css';
 import '../index.css';
 import '../css/hint.css'; // Tooltips hint.css
+import '../css/transitions.css';
 
 // Components
 import Header from './header';
@@ -20,6 +21,11 @@ import Auth from './auth';
 import {CoursePlanNotFound} from './errorpages';
 import Semester from './semester';
 import CourseDashBoard from './coursedashboard';
+
+// Animations
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // ES6
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {Motion, spring} from 'react-motion';
 
 /** The main course plan component that renders an entire course plan*/
 class CoursePlan extends Component {
@@ -45,7 +51,7 @@ class CoursePlan extends Component {
         let username = await Auth.getUsername();
 
         if(coursePlan.success){
-              this.setState({
+            this.setState({
                 username: username,
                 allowEdit: coursePlan.plan.owner === username,
                 planOwner: coursePlan.plan.owner,
@@ -69,7 +75,6 @@ class CoursePlan extends Component {
                 loading: false
             });
         }
-
     }
 
     /* Get the course plan of current link. Set meta dat */
@@ -93,7 +98,9 @@ class CoursePlan extends Component {
         let semesters = this.state.plan.semesters;
         let semesterBoxes = [];
         for (let i = 0; i < semesters.length; i++) {
-            semesterBoxes.push(<Semester plan={this.state.plan} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
+
+            semesterBoxes.push(<Semester key={i} plan={this.state.plan} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
+
         }
 
         return semesterBoxes;
@@ -118,7 +125,7 @@ class CoursePlan extends Component {
               <div>
                   <Header user={this.state.username}/>
                   <div className="fullpage_loading">
-                  <CircularProgress size={50} thickness={2}/>
+                      <CircularProgress size={50} thickness={2}/>
                   </div>
               </div>
             )
@@ -137,26 +144,45 @@ class CoursePlan extends Component {
             else {
                 let semesterBoxes = this.fillSemesters();
                 let scheduleConflicts = CoursePlan.checkScheduleConflicts(this.state.plan);
-
                 return (
+
                   <div>
                       <Header user={this.state.username}/>
-                      <div className="toppadding100"> </div>
-                      <div className="content_wrapper">
-                          {semesterBoxes}
 
-                          <div className="lowest_wrapper">
-                              <CourseDashBoard name={this.state.name} scheduleConflict={scheduleConflicts} username={this.state.username}
-                                               allowEdit={this.state.allowEdit} profile={this.state.profile}
-                                               programme={this.state.programme} planHash={this.state.planHash}
-                                               owner={this.state.planOwner} ects={this.state.ECTS}
-                                               advancedECTS={this.state.advancedECTS} editMode={false}/>
-                          </div>
+                      <div className="toppadding100"> </div>
+
+
+                      <div className="content_wrapper">
+                          <CSSTransitionGroup
+                            transitionName="example"
+                            transitionAppear={true}
+                            transitionAppearTimeout={300}
+                            transitionEnter={false}
+                            transitionLeave={false}>
+                            {semesterBoxes}
+                      </CSSTransitionGroup>
+
+                      <div className="lowest_wrapper">
+                          <CSSTransitionGroup
+                            transitionName="example"
+                            transitionAppear={true}
+                            transitionAppearTimeout={300}
+                            transitionEnter={false}
+                            transitionLeave={false}>
+                              <CourseDashBoard key="2" name={this.state.name} scheduleConflict={scheduleConflicts} username={this.state.username}
+                                            allowEdit={this.state.allowEdit} profile={this.state.profile}
+                                            programme={this.state.programme} planHash={this.state.planHash}
+                                            owner={this.state.planOwner} ects={this.state.ECTS}
+                                            advancedECTS={this.state.advancedECTS} editMode={false}/>
+                          </CSSTransitionGroup>
+
                       </div>
 
                   </div>
 
-                );
+            </div>
+
+            );
             }
         }
     }

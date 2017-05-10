@@ -28,6 +28,9 @@ import Snackbar from 'material-ui/Snackbar';
 import Header from './header';
 import Auth from './auth';
 
+// Animations
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // ES6
+
 const styles = {
     button: {
         width: 145,
@@ -219,7 +222,7 @@ class Dashboard extends Component {
               <div>
                   <Header user={this.state.username}/>
                   <div className="fullpage_loading">
-                  <CircularProgress size={50} thickness={2}/>
+                      <CircularProgress size={50} thickness={2}/>
                   </div>
               </div>
             )
@@ -230,96 +233,103 @@ class Dashboard extends Component {
               <div>
                   <Header user={this.state.username}/>
                   <div className="toppadding100"> </div>
-                  <div className="content_wrapper">
+                  <CSSTransitionGroup
+                    transitionName="example"
+                    transitionAppear={true}
+                    transitionAppearTimeout={300}
+                    transitionEnter={false}
+                    transitionLeave={false}>
+                      <div className="content_wrapper">
 
-                      <div className="upper_left_wrapper">
-                          <div className="box_headline"> My course plans</div>
-                          <div className="box_content padding-5">
-                              <div className="course_plans">
-                                  {coursePlans}
-                              </div>
-                              <div className="new_plan_wrapper">
-                                  <div className="plan_text_field">
-                                      <TextField
-                                        onChange={e => this.setState({new_plan_name: e.target.value})}
-                                        style={{width: 140, marginTop: -10, fontSize: 12}}
-                                        value={this.state.new_plan_name}
-                                        hintText="Name"
-                                        inputStyle={{color: '#595959'}}
-                                      />
+                          <div className="upper_left_wrapper">
+                              <div className="box_headline"> My course plans</div>
+                              <div className="box_content padding-5">
+                                  <div className="course_plans">
+                                      {coursePlans}
                                   </div>
-                                  <div className="button_div">
+                                  <div className="new_plan_wrapper">
+                                      <div className="plan_text_field">
+                                          <TextField
+                                            onChange={e => this.setState({new_plan_name: e.target.value})}
+                                            style={{width: 140, marginTop: -10, fontSize: 12}}
+                                            value={this.state.new_plan_name}
+                                            hintText="Name"
+                                            inputStyle={{color: '#595959'}}
+                                          />
+                                      </div>
+                                      <div className="button_div">
 
-                                      <RaisedButton
-                                        target="_blank"
-                                        label="Create new"
-                                        style={styles.button_small}
-                                        onTouchTap={this.createNewPlan}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-
-                      <div className="upper_right_wrapper">
-                          <div className="box_headline"> Saved course plans</div>
-                          <div className="box_content">
-                          </div>
-                      </div>
-
-                      <div className="lowest_wrapper">
-                          <div className="box_headline"> Dashboard</div>
-                          <div className="box_content_small">
-                              <div className="box_content_left_bigger">
-                              </div>
-                              <div className="box_content_right_smaller">
-                                  <div className="field">
-                                  </div>
-                                  <div className="field">
-                                  </div>
-                                  <div className="field">
-                                      <Link onClick={() => {
-                                          Auth.logOut()
-                                      }}
-                                            to={{pathname: '/'}}>
                                           <RaisedButton
                                             target="_blank"
-                                            label="Log out"
-                                            style={styles.button}
+                                            label="Create new"
+                                            style={styles.button_small}
+                                            onTouchTap={this.createNewPlan}
                                           />
-                                      </Link>
+                                      </div>
                                   </div>
+                              </div>
+                          </div>
 
-                                  <div className="field">
-                                      <RaisedButton
-                                        target="_blank"
-                                        secondary={true}
-                                        label="Delete user"
-                                        style={styles.deletebutton}
-                                        onTouchTap={this.handleOpenDialog}
-                                      />
-                                      <Dialog
-                                        title="Are you sure you want to delete your user account?"
-                                        actions={dialogActions}
-                                        modal={false}
-                                        open={this.state.openDialog}
-                                        onRequestClose={this.handleCloseDialog}
-                                      >
-                                          This action cannot be undone.
-                                      </Dialog>
+                          <div className="upper_right_wrapper">
+                              <div className="box_headline"> Saved course plans</div>
+                              <div className="box_content">
+                              </div>
+                          </div>
+
+                          <div className="lowest_wrapper">
+                              <div className="box_headline"> Dashboard</div>
+                              <div className="box_content_small">
+                                  <div className="box_content_left_bigger">
                                   </div>
+                                  <div className="box_content_right_smaller">
+                                      <div className="field">
+                                      </div>
+                                      <div className="field">
+                                      </div>
+                                      <div className="field">
+                                          <Link onClick={() => {
+                                              Auth.logOut()
+                                          }}
+                                                to={{pathname: '/'}}>
+                                              <RaisedButton
+                                                target="_blank"
+                                                label="Log out"
+                                                style={styles.button}
+                                              />
+                                          </Link>
+                                      </div>
 
+                                      <div className="field">
+                                          <RaisedButton
+                                            target="_blank"
+                                            secondary={true}
+                                            label="Delete user"
+                                            style={styles.deletebutton}
+                                            onTouchTap={this.handleOpenDialog}
+                                          />
+                                          <Dialog
+                                            title="Are you sure you want to delete your user account?"
+                                            actions={dialogActions}
+                                            modal={false}
+                                            open={this.state.openDialog}
+                                            onRequestClose={this.handleCloseDialog}
+                                          >
+                                              This action cannot be undone.
+                                          </Dialog>
+                                      </div>
+
+                                  </div>
                               </div>
                           </div>
                       </div>
-                  </div>
 
-                  <Snackbar
-                    open={this.state.snackbarOpen}
-                    message={this.state.snackbarMessage}
-                    autoHideDuration={4000}
-                    onRequestClose={this.handleRequestCloseSnackbar}
-                  />
+                      <Snackbar
+                        open={this.state.snackbarOpen}
+                        message={this.state.snackbarMessage}
+                        autoHideDuration={4000}
+                        onRequestClose={this.handleRequestCloseSnackbar}
+                      />
+                  </CSSTransitionGroup>
               </div>
             );
         }

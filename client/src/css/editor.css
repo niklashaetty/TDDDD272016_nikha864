@@ -1,3 +1,8 @@
 .dropdown{
   float:left;
 }
+
+.semester_boxes{
+  max-height: 660px;
+  overflow: hidden;
+}

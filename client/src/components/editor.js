@@ -27,6 +27,9 @@ import '../css/hint.css'; // Tooltips hint.css
 // Components
 import Semester from './semester';
 
+// Animations
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // ES6
+
 
 const years = [
     <MenuItem key={1} value={2010} primaryText="2010" />,
@@ -97,15 +100,24 @@ class CoursePlanEditor extends Component {
             maxAllowedSemesters: 4,
             value: 2017,
             semester: 'Spring (VT)',
-            loadingAddingPlan: false
+            loadingAddingPlan: false,
+            snackbarColor: 'white'
         };
     }
 
     // Callback so that children of CoursePlanEditor can callback for re-rendering
     // Also shows snackbar message.
-    updateEditor = (snackbarMessage) => {
+    updateEditor = (response) => {
         this.componentWillMount();
-        this.setState({snackbarMessage: snackbarMessage});
+        if(response.success){
+            this.setState({snackbarMessage: response.message,
+                snackbarColor: 'white'});
+        }
+
+        else{
+            this.setState({snackbarMessage: response.message,
+                snackbarColor: 'red'});
+        }
         this.handleOpenSnackbar();
 
     };
@@ -163,16 +175,28 @@ class CoursePlanEditor extends Component {
         });
 
         let response = await request.json();
+
         if(response.success){
             // Re-render course plans to update the new one
             this.componentWillMount();
+            this.setState({
+                snackbarMessage: response.message,
+                snackbarColor: 'white',
+                loadingAddingPlan: false
+
+            });
+        }
+
+        else{
+            this.setState({
+                snackbarMessage: response.message,
+                snackbarColor: 'red',
+                loadingAddingPlan: false
+
+            });
         }
 
         this.handleOpenSnackbar();
-        this.setState({
-            snackbarMessage: response.message,
-            loadingAddingPlan: false
-        });
     }
 
     async getCoursePlan() {
@@ -192,7 +216,7 @@ class CoursePlanEditor extends Component {
         let semesters = this.state.plan.semesters;
         let semesterBoxes = [];
         for (let i = 0; i < semesters.length; i++) {
-            semesterBoxes.push(<Semester callback={this.updateEditor} plan={this.state.plan} editMode={true} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
+            semesterBoxes.push(<Semester key={i} callback={this.updateEditor} plan={this.state.plan} editMode={true} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
         }
 
         return semesterBoxes;
@@ -211,7 +235,7 @@ class CoursePlanEditor extends Component {
               <div>
                   <Header user={this.state.username}/>
                   <div className="fullpage_loading">
-                  <CircularProgress size={50} thickness={2}/>
+                      <CircularProgress size={50} thickness={2}/>
                   </div>
               </div>
             )
@@ -312,26 +336,48 @@ class CoursePlanEditor extends Component {
               <div>
                   <Header user={this.state.username}/>
                   <div className="toppadding100"> </div>
-                  <div className="content_wrapper">
-                      {semesterBoxes}
-                      {addNewSemesterButton}
+                  <CSSTransitionGroup
+                    transitionName="example"
+                    transitionAppear={true}
+                    transitionAppearTimeout={300}
+                    transitionEnter={false}
+                    transitionLeave={false}>
+                      <div className="content_wrapper">
+                          <div className="semester_boxes">
+                          <CSSTransitionGroup
+                            transitionName="example"
+                            transitionEnterTimeout={300}
+                            transitionLeaveTimeout={300}>
+                              {semesterBoxes}
+                          </CSSTransitionGroup>
+                          <CSSTransitionGroup
+                            transitionName="example"
+                            transitionAppear={true}
+                            transitionAppearTimeout={300}
+                            transitionEnter={false}
+                            transitionLeave={false}>
+                              {addNewSemesterButton}
+                          </CSSTransitionGroup>
+                          </div>
 
-                      <div className="lowest_wrapper">
-                          <CourseDashBoard name={this.state.plan.name} scheduleConflict={schedulingConflicts}
-                                           username={this.state.username}
-                                           allowEdit={true}
-                                           profile={this.state.plan.profile}
-                                           programme={this.state.plan.programme} planHash={this.state.planHash}
-                                           owner={this.state.planOwner} ects={this.state.ECTS}
-                                           advancedECTS={this.state.advancedECTS} editMode={true}/>
+                          <div className="lowest_wrapper">
+                              <CourseDashBoard name={this.state.plan.name} scheduleConflict={schedulingConflicts}
+                                               username={this.state.username}
+                                               allowEdit={true}
+                                               profile={this.state.plan.profile}
+                                               programme={this.state.plan.programme} planHash={this.state.planHash}
+                                               owner={this.state.planOwner} ects={this.state.ECTS}
+                                               advancedECTS={this.state.advancedECTS} editMode={true}/>
+                          </div>
                       </div>
-                  </div>
-                  <Snackbar
-                    open={this.state.snackbarOpen}
-                    message={this.state.snackbarMessage}
-                    autoHideDuration={4000}
-                    onRequestClose={this.handleRequestCloseSnackbar}
-                  />
+                      <Snackbar
+                        open={this.state.snackbarOpen}
+                        message={this.state.snackbarMessage}
+                        autoHideDuration={4000}
+                        onRequestClose={this.handleRequestCloseSnackbar}
+                        contentStyle={{ color: this.state.snackbarColor}}
+                      />
+                  </CSSTransitionGroup>
               </div>
             );
         }

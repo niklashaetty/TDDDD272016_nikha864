@@ -11,7 +11,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-// Components
+// Comp
 import Auth from './auth';
 
 const styles = {

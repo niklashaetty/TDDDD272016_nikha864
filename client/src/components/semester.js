@@ -94,8 +94,9 @@ class Semester extends Component {
         });
 
         let response = await request.json();
+
+        this.props.callback(response);
         this.setState({loading: false});
-        this.props.callback(response.message);
     };
 
     render() {
@@ -175,7 +176,7 @@ class Semester extends Component {
             />
         ];
 
-        if(this.state.loading){
+        if(false){
             return (
               <div className={this.state.boxClassName} style={{backgroundColor: 'transparent'}}>
                   <div className="box_content_loading">
