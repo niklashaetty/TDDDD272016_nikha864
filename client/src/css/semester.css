@@ -1,0 +1,7 @@
+.delete_icon_right{
+  float:right;
+  margin-right: 5px;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
