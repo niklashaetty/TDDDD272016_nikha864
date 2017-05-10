@@ -188,11 +188,10 @@ class Dashboard extends Component {
             }
         }
         else {
-
             let noPlans =
               <div className="">
                   <Divider style={{backgroundColor: '#F2F8FA'}}/>
-                  <p className="info_text"> You have no plans yet, why not create one?!</p>
+                  <p className="info_text"> You have no plans yet, why not create one?</p>
               </div>;
             result.push(noPlans);
         }
@@ -217,11 +216,11 @@ class Dashboard extends Component {
         // When loading, show a loading icon
         if(this.state.loading){
             return(
-
               <div>
                   <Header user={this.state.username}/>
-                  <div className="padding500"> </div>
-                  <CircularProgress size={80} thickness={5} />
+                  <div className="fullpage_loading">
+                  <CircularProgress size={50} thickness={2}/>
+                  </div>
               </div>
             )
         }
@@ -314,7 +313,7 @@ class Dashboard extends Component {
                           </div>
                       </div>
                   </div>
-                  
+
                   <Snackbar
                     open={this.state.snackbarOpen}
                     message={this.state.snackbarMessage}
