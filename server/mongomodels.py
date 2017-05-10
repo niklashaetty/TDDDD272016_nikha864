@@ -9,6 +9,9 @@ Make sure these database credentials are stored as environment vars:
 from pymongo import MongoClient
 import os
 
+# Global variables
+MAX_SEMESTERS = 4
+
 
 def get_collection():
     """
@@ -28,10 +31,12 @@ def add_course_plan(plan_hash, name, owner, total_ects, advanced_ects, semesters
     Add a new course plan to the database
     :param plan_hash: Unique hash that identifies the course
     :param owner: owner of the course plan
+    :param name: name of the course plan
+    :param advanced_ects: Total advanced ects points
     :param total_ects: Total ects points
     :param semesters: List of semesters in json format, like this:
         {
-            "schedule_conflict": true,
+            "schedule_conflict": True,
             "ects": 30,
             "advanced_ects": 18,
             "period1": [
@@ -75,6 +80,35 @@ def add_course_plan(plan_hash, name, owner, total_ects, advanced_ects, semesters
         return False
 
 
+def add_semester(plan_hash, semester_name):
+    """
+    Add a new and empty semester to and existing plan in the database.
+    :param plan_hash: Unique plan identifier
+    :param semester_name: name of the semester.
+    :return: Boolean success
+    """
+    collection = get_collection()
+
+    semesters = get_semesters(plan_hash)
+    if len(semesters) >= MAX_SEMESTERS:
+        return False
+    else:
+
+        # Empty semester template
+        new_semester = {
+            "schedule_conflict": False,
+            "ects": 0,
+            "advanced_ects": 0,
+            "period1": [],
+            "period2": [],
+            "semester": semester_name
+        }
+        semesters.append(new_semester)
+        collection.update({'plan_hash': plan_hash},
+                          {'$set': {'semesters': semesters}})
+        return True
+
+
 def get_course_plan_owner(plan_hash):
     """
     Return owner of a course plan with provided hash.
@@ -114,10 +148,46 @@ def get_all_plans(owner):
     return course_plans
 
 
+def get_semesters(plan_hash):
+    """
+    Get all semesters with a provided plan_hash
+    :param plan_hash: Unique plan identifier
+    :return: List of semesters.
+    """
+    collection = get_collection()
+    res = collection.find_one({'plan_hash': plan_hash}, {'semesters': 1, '_id': 0})
+    return res['semesters']
+
+
+def plan_exists(identifier):
+    """
+    Check if a course plan exists
+    :param identifier: Unique plan identifier
+    :return: Boolean plan_exists
+    """
+    collection = get_collection()
+    result = collection.find({'plan_hash': identifier})
+    return result.count() > 0
+
+
+def semester_exists(identifier, semester_name):
+    """
+    Check if a semester exists in a given course plan, based on semester_name
+    :param identifier: Unique plan identifier
+    :param semester_name: name of semester, i.e. Spring (VT) 2017
+    :return: Boolean semester_exists
+    """
+    semesters = get_semesters(identifier)
+    for s in semesters:
+        if s['semester'] == semester_name:
+            return True
+
+    return False
+
+
 def delete_course_plan(identifier, owner):
     """
     Delete a course plan from the database identifier and owner.
-    
     :param identifier: identifier of a plan
     :param owner: owner of the course plan
     :return: Boolean success.             
@@ -138,3 +208,31 @@ def delete_all_course_plans(owner):
     collection = get_collection()
     result = collection.delete_many({'owner': owner})
     return result.deleted_count > 0
+
+
+def delete_semester(identifier, semester_name):
+    """
+    Delete a semester from a given course plan
+    :param identifier: identifier of a plan
+    :param semester_name: name of semester, unique for this plan.
+    :return: Boolean success.             
+    """
+
+    collection = get_collection()
+    semesters = get_semesters(identifier)
+    removed = False
+
+    for s in semesters:
+
+        if s['semester'] == semester_name:
+            semesters.remove(s)
+            removed = True
+            break
+
+    if removed:
+        collection.update({'plan_hash': identifier},
+                          {'$set': {'semesters': semesters}})
+        return True
+
+    else:
+        return False
