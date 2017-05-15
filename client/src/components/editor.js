@@ -108,17 +108,21 @@ class CoursePlanEditor extends Component {
     // Callback so that children of CoursePlanEditor can callback for re-rendering
     // Also shows snackbar message.
     updateEditor = (response) => {
-        this.componentWillMount();
+        console.log("callback init");
         if(response.success){
             this.setState({snackbarMessage: response.message,
                 snackbarColor: 'white'});
+            this.componentWillMount();
         }
 
         else{
             this.setState({snackbarMessage: response.message,
                 snackbarColor: 'red'});
+
+
         }
         this.handleOpenSnackbar();
+        console.log("callback done");
 
     };
 
@@ -148,7 +152,7 @@ class CoursePlanEditor extends Component {
                 ECTS: coursePlan.plan.ects,
                 advancedECTS: coursePlan.plan.advanced_ects,
                 plan: coursePlan.plan,
-                loading: false
+                loading: false,
             });
         }
 
@@ -156,7 +160,7 @@ class CoursePlanEditor extends Component {
             this.setState({
                 username: username,
                 coursePlanDoesNotExists: true,
-                loading: false
+                loading: false,
             });
         }
     }
@@ -164,7 +168,6 @@ class CoursePlanEditor extends Component {
     // Send a request to the server to add a semester to the current course plan.
     async addSemester(event) {
         event.preventDefault();
-        this.setState({loadingAddingPlan: true});
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("semester_name", this.state.semester + ' ' + this.state.value);
@@ -213,7 +216,9 @@ class CoursePlanEditor extends Component {
 
     /* Push all semesters into a list of Semester components that can be rendered easily */
     fillSemesters(){
+        console.log("filling semesters");
         let semesters = this.state.plan.semesters;
+        console.log(semesters);
         let semesterBoxes = [];
         for (let i = 0; i < semesters.length; i++) {
             semesterBoxes.push(<Semester key={i} callback={this.updateEditor} plan={this.state.plan} editMode={true} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
@@ -253,7 +258,10 @@ class CoursePlanEditor extends Component {
 
         // all ok, render plan in editor mode.
         else {
+            console.log("rendering semesters");
+
             let semesterBoxes = this.fillSemesters(this.state.plan);
+            console.log(semesterBoxes);
             let addNewSemesterButton = null;
 
             if(semesterBoxes.length <= this.state.maxAllowedSemesters-1){

@@ -82,12 +82,14 @@ class Semester extends Component {
 
     // Delete a semester
     async deleteSemester (){
+        console.log("init delete semester");
         this.setState({loading: true});
         this.handleCloseDialogDeleteSemester();
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("identifier", this.state.plan.plan_hash);
         payload.append("semester_name", this.state.semester.semester);
+        console.log("trying to delete: " + this.state.semester.semester + " from: " + this.state.plan.plan_hash);
         const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/delete_semester', {
             method: 'post',
             body: payload
@@ -97,6 +99,7 @@ class Semester extends Component {
 
         this.props.callback(response);
         this.setState({loading: false});
+        console.log("Done delete semester");
     };
 
     render() {
@@ -176,17 +179,6 @@ class Semester extends Component {
             />
         ];
 
-        if(false){
-            return (
-              <div className={this.state.boxClassName} style={{backgroundColor: 'transparent'}}>
-                  <div className="box_content_loading">
-                      <CircularProgress size={40} thickness={2} />
-                  </div>
-              </div>
-            );
-        }
-
-        else{
             return (
               <div className={this.state.boxClassName}>
                   {boxHeadline}
@@ -232,6 +224,6 @@ class Semester extends Component {
               </div>
             );
         }
-    }
+
 }
 export default Semester;

@@ -24,8 +24,6 @@ import CourseDashBoard from './coursedashboard';
 
 // Animations
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // ES6
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {Motion, spring} from 'react-motion';
 
 /** The main course plan component that renders an entire course plan*/
 class CoursePlan extends Component {
