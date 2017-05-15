@@ -69,7 +69,8 @@ class CourseDashBoard extends Component {
 
     // Send a request to the server to delete a course plan
     async deleteCoursePlan() {
-        let planHash = window.location.href.substring(window.location.href.lastIndexOf('/')+1);
+        let planHash = this.props.planHash;
+        console.log(planHash);
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("identifier", planHash);
@@ -152,6 +153,7 @@ class CourseDashBoard extends Component {
 
         // Hide edit buttons if in editor mode
         let editButton;
+        let deleteButton = null;
         if(this.state.editMode){
             editButton = <div className="field_sidebyside">
                 <RaisedButton
@@ -161,6 +163,27 @@ class CourseDashBoard extends Component {
                   style={styles.button}
                   onTouchTap={this.exitEditor}
                 />
+            </div>;
+
+            deleteButton = <div className="field_sidebyside">
+                <RaisedButton
+                  target="_blank"
+                  secondary={true}
+                  label="Delete"
+                  disabled={!this.props.allowEdit}
+                  style={styles.deletebutton}
+                  onTouchTap={this.handleOpenDialog}
+                />
+
+                <Dialog
+                  title="Are you sure you want to delete this course plan?"
+                  actions={dialogActions}
+                  modal={false}
+                  open={this.state.openDialog}
+                  onRequestClose={this.handleCloseDialog}
+                >
+                    This action cannot be reverted.
+                </Dialog>
             </div>;
         }
         else{
@@ -230,26 +253,8 @@ class CourseDashBoard extends Component {
                       </div>
 
                       {editButton}
-                      <div className="field_sidebyside">
-                          <RaisedButton
-                            target="_blank"
-                            secondary={true}
-                            label="Delete"
-                            disabled={!this.props.allowEdit}
-                            style={styles.deletebutton}
-                            onTouchTap={this.handleOpenDialog}
-                          />
+                      {deleteButton}
 
-                          <Dialog
-                            title="Are you sure you want to delete this course plan?"
-                            actions={dialogActions}
-                            modal={false}
-                            open={this.state.openDialog}
-                            onRequestClose={this.handleCloseDialog}
-                          >
-                              This action cannot be reverted.
-                          </Dialog>
-                      </div>
 
                   </div>
               </div>
