@@ -10,14 +10,23 @@ import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import CircularProgress from 'material-ui/CircularProgress';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 // Components
 import Auth from './auth';
+import AddCourse from './addcourse';
 
 const styles = {
     deleteIcon: {
         fontSize: 15,
         color: 'red',
+    },
+    addCourse: {
+        fontSize: 19,
+        height: '19px',
+        width: '19px',
+        color: '#545a6a',
+        marginTop: 0
     }
 
 };
@@ -32,7 +41,8 @@ class Semester extends Component {
             semester: null,
             editMode: this.props.editMode,
             openDialogDeleteSemester: false,
-            loading: false
+            loading: false,
+            openDialogNewCourse: false
         };
     }
 
@@ -79,6 +89,14 @@ class Semester extends Component {
         this.setState({openDialogDeleteSemester: false});
     };
 
+    handleOpenDialogNewCourse = () => {
+        this.setState({openDialogNewCourse: true});
+    };
+
+    handleCloseDialogNewCourse = () => {
+        this.setState({openDialogNewCourse: false});
+    };
+
 
     // Delete a semester
     async deleteSemester (){
@@ -101,6 +119,21 @@ class Semester extends Component {
         this.setState({loading: false});
         console.log("Done delete semester");
     };
+
+    // Add a course to a semester
+    async addCourse(){
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", this.state.plan.plan_hash);
+        payload.append("semester_name", this.state.semester.semester);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/add_course', {
+            method: 'post',
+            body: payload
+        });
+
+        let response = await request.json();
+        this.props.callback(response);
+    }
 
     render() {
 
@@ -154,19 +187,26 @@ class Semester extends Component {
 
         // EDITMODE: Add delete button if in editMode.
         let boxHeadline;
+        let newCourseButton;
         if(this.state.editMode){
             boxHeadline =
               <div className="box_headline">
                   <div className="box_headline_text">{this.state.semester.semester}</div>
                   <div className="delete_icon_right"> <FontIcon onClick={this.handleOpenDialogDeleteSemester} className="material-icons" style={styles.deleteIcon}>clear</FontIcon></div>
               </div>;
+            newCourseButton = <div className="semester_summary">
+                <p onClick={this.handleOpenDialogNewCourse} className="semester_summary_new_course new_course"><FontIcon className="material-icons" style={styles.addCourse}>add</FontIcon> Add new course</p>
+            </div>;
+
+
         }
         else{
             boxHeadline = <div className="box_headline"><div className="box_headline_text">{this.state.semester.semester}</div></div>;
+            newCourseButton = <div className="semester_summary"> </div>;
         }
 
         // EDITMODE: Actions for dialog
-        const dialogActions = [
+        const dialogActionsDeleteSemester = [
             <FlatButton
               label="Cancel"
               primary={true}
@@ -179,51 +219,86 @@ class Semester extends Component {
             />
         ];
 
-            return (
-              <div className={this.state.boxClassName}>
-                  {boxHeadline}
-                  <div className="box_content">
-                      <div className="semester_table">
-                          <table className="standard_table">
-                              {tableHead}
-                              <tbody>
-                              {period1Rows}
-                              <tr className="table_header">
-                                  <td>Period 2</td>
-                              </tr>
-                              <tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
-                              {period2Rows}
-                              </tbody>
-                          </table>
+        const dialogActionsNewCourse = [
+            <FlatButton
+              label="Cancel"
+              primary={true}
+              onTouchTap={this.handleCloseDialogNewCourse}
+            />,
+            <FlatButton
+              label="Add course"
+              primary={true}
+              onTouchTap={() => alert("Added course (only frontend support, doesnt actually do anything yet!)")}
+            />
+        ];
 
-                      </div>
-                      <div className="semester_summary">
-                          <p className="semester_summary_ects">Total ECTS points: {this.state.semester.ects}</p>
-                      </div>
-                      <div className="semester_summary">
-                          <p className="semester_summary_ects">Total advanced ECTS points: {this.state.semester.advanced_ects}</p>
-                          <div className="warning_icon">
-                        <span className="hint--top hint--warning hint--rounded hint--medium" aria-label="This semester contains a scheduling conflict.">
+        return (
+          <div className={this.state.boxClassName}>
+              {boxHeadline}
+              <div className="box_content">
+                  <div className="semester_table">
+                      <table className="standard_table">
+                          {tableHead}
+                          <tbody>
+                          {period1Rows}
+                          <tr className="table_header">
+                              <td>Period 2</td>
+                          </tr>
+                          <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                          </tr>
+                          {period2Rows}
+                          </tbody>
+                      </table>
+
+                  </div>
+                  {newCourseButton}
+                  <div className="semester_summary">
+                  </div>
+                  <div className="semester_summary">
+                      <p className="semester_summary_ects">Total ECTS points: {this.state.semester.ects}</p>
+                  </div>
+                  <div className="semester_summary">
+                      <p className="semester_summary_ects">Total advanced ECTS
+                          points: {this.state.semester.advanced_ects}</p>
+                      <div className="warning_icon">
+                        <span className="hint--top hint--warning hint--rounded hint--medium"
+                              aria-label="This semester contains a scheduling conflict.">
                             {scheduleConflictIcon}
                         </span>
-                          </div>
                       </div>
                   </div>
-
-
-                  <Dialog
-                    title="Are you sure you want to delete this semester?"
-                    actions={dialogActions}
-                    modal={false}
-                    open={this.state.openDialogDeleteSemester}
-                    onRequestClose={this.handleCloseDialogDeleteSemester}
-                  >
-                      This action cannot be reverted.
-                  </Dialog>
-
               </div>
-            );
-        }
+
+
+              <Dialog
+                title="Are you sure you want to delete this semester?"
+                actions={dialogActionsDeleteSemester}
+                modal={false}
+                open={this.state.openDialogDeleteSemester}
+                onRequestClose={this.handleCloseDialogDeleteSemester}
+              >
+                  This action cannot be reverted.
+              </Dialog>
+
+              <Dialog
+                title="Add a new course"
+                actions={dialogActionsNewCourse}
+                modal={false}
+                open={this.state.openDialogNewCourse}
+                onRequestClose={this.handleCloseDialogNewCourse}
+              >
+                  <AddCourse/>
+              </Dialog>
+
+          </div>
+        );
+    }
 
 }
 export default Semester;

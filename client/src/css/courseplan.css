@@ -26,20 +26,12 @@
 }
 
 .semester_table{
-  height: 235px;
+  height: 200px;
 }
 .semester_summary{
   width: 100%;
-  height: 15px;
-  font-size: 10px;
-  color: #8b9fa3;
-  font-family: 'Roboto', sans-serif;
-  display: inline-flex;
-}
-
-.semester_summary_ects{
-  width: 100%;
-  height: 21px;
+  float: right;
+  height: 17px;
   font-size: 10px;
   color: #8b9fa3;
   font-family: 'Roboto', sans-serif;
@@ -48,8 +40,42 @@
   margin: 0;
 }
 
+.new_course{
+  cursor: pointer;
+}
+
+.semester_summary_ects{
+  width: 100%;
+  height: 17px;
+  font-size: 10px;
+  color: #8b9fa3;
+  font-family: 'Roboto', sans-serif;
+  display: inline-flex;
+  padding: 0;
+  margin: 0;
+  float: right;
+}
+
+.semester_summary_new_course{
+  width: 30%;
+  clear: both;
+  float: right;
+  height: 19px;
+  line-height: 19px;
+  vertical-align: center;
+  font-size: 11px;
+  color: #545a6a;
+  font-family: 'Roboto', sans-serif;
+  display: inline-flex;
+  margin: 0;
+  margin-left: 370px;
+  padding: 0;
+}
+
+
 .warning_icon{
   clear: both;
+  height: 15px;
   padding: 0;
   float: right;
 }

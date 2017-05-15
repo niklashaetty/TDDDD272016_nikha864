@@ -1,0 +1,22 @@
+.filter_menu{
+  clear: both;
+  float:left;
+  height: 75px;
+  width: 100%;
+}
+
+.filter_headline{
+  height: 30px;
+  width: 100%;
+}
+
+.course_table{
+  clear:both;
+  height: 500px;
+  width: 100%;
+}
+
+.table_row{
+  padding: 5px 0 0 0 !important;
+  margin: 0 0 0 0 !important;
+}

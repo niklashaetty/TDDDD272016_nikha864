@@ -216,9 +216,7 @@ class CoursePlanEditor extends Component {
 
     /* Push all semesters into a list of Semester components that can be rendered easily */
     fillSemesters(){
-        console.log("filling semesters");
         let semesters = this.state.plan.semesters;
-        console.log(semesters);
         let semesterBoxes = [];
         for (let i = 0; i < semesters.length; i++) {
             semesterBoxes.push(<Semester key={i} callback={this.updateEditor} plan={this.state.plan} editMode={true} semesterIndex={i} semester={semesters[i]} scheduleConflict={semesters[i].schedule_conflict}/>)
