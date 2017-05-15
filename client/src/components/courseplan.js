@@ -167,7 +167,7 @@ class CoursePlan extends Component {
                             transitionAppearTimeout={300}
                             transitionEnter={false}
                             transitionLeave={false}>
-                              <CourseDashBoard key="2" name={this.state.name} scheduleConflict={scheduleConflicts} username={this.state.username}
+                              <CourseDashBoard key="2" name={this.state.planName} scheduleConflict={scheduleConflicts} username={this.state.username}
                                             allowEdit={this.state.allowEdit} profile={this.state.profile}
                                             programme={this.state.programme} planHash={this.state.planHash}
                                             owner={this.state.planOwner} ects={this.state.ECTS}
