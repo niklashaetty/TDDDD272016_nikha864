@@ -253,8 +253,6 @@ class CourseDashBoard extends Component {
 
                       {editButton}
                       {deleteButton}
-
-
                   </div>
               </div>
           </div>

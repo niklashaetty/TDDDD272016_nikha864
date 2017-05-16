@@ -106,7 +106,7 @@ class CoursePlanEditor extends Component {
     }
 
     // Callback so that children of CoursePlanEditor can callback for re-rendering
-    // Also shows snackbar message.
+    // and show snackbar message.
     updateEditor = (response) => {
         if(response.success){
             this.setState({snackbarMessage: response.message,
@@ -181,7 +181,6 @@ class CoursePlanEditor extends Component {
                 snackbarMessage: response.message,
                 snackbarColor: 'white',
                 loadingAddingPlan: false
-
             });
         }
 
@@ -190,7 +189,6 @@ class CoursePlanEditor extends Component {
                 snackbarMessage: response.message,
                 snackbarColor: 'red',
                 loadingAddingPlan: false
-
             });
         }
 

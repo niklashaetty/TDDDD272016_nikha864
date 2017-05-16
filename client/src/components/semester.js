@@ -127,27 +127,11 @@ class Semester extends Component {
         this.setState({loading: false});
     };
 
-
-    // Add a course to a semester
-    async addCourse(){
-        let payload = new FormData();
-        payload.append("token", Auth.getToken());
-        payload.append("identifier", this.state.plan.plan_hash);
-        payload.append("semester_name", this.state.semester.semester);
-        payload.append("course_code", );
-        payload.append("course_name");
-        payload.append("course_period");
-        payload.append("course_block");
-        payload.append("course_credits");
-        payload.append("course_level");
-        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/add_course', {
-            method: 'post',
-            body: payload
-        });
-
-        let response = await request.json();
+    // Middle-man callback from child AddCourse. Callback to parent CourseEditor
+    callbackAddCourse = (response) => {
+        this.handleCloseDialogNewCourse();
         this.props.callback(response);
-    }
+    };
 
     render() {
 
@@ -243,7 +227,7 @@ class Semester extends Component {
               label="Add course"
               disabled={!this.state.enableCourseButton}
               primary={true}
-              onTouchTap={this.addCourse}
+              onTouchTap={() => this.refs.addCourse.addCourse()}
             />
         ];
         return (
@@ -307,7 +291,7 @@ class Semester extends Component {
                 open={this.state.openDialogNewCourse}
                 onRequestClose={this.handleCloseDialogNewCourse}
               >
-                  <AddCourse callbackEnableAddCourseButton={this.handleEnableCourseButton}/>
+                  <AddCourse ref="addCourse" callbackAddCourse={this.callbackAddCourse} semester={this.state.semester} plan={this.state.plan} callbackEnableAddCourseButton={this.handleEnableCourseButton}/>
               </Dialog>
 
           </div>
