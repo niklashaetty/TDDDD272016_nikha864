@@ -70,7 +70,6 @@ class CourseDashBoard extends Component {
     // Send a request to the server to delete a course plan
     async deleteCoursePlan() {
         let planHash = this.props.planHash;
-        console.log(planHash);
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("identifier", planHash);
