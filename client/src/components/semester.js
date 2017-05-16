@@ -110,7 +110,6 @@ class Semester extends Component {
 
     // Delete a semester
     async deleteSemester (){
-        this.setState({loading: true});
         this.handleCloseDialogDeleteSemester();
         let payload = new FormData();
         payload.append("token", Auth.getToken());
@@ -124,7 +123,6 @@ class Semester extends Component {
         let response = await request.json();
 
         this.props.callback(response);
-        this.setState({loading: false});
     };
 
     // Middle-man callback from child AddCourse. Callback to parent CourseEditor
@@ -195,8 +193,6 @@ class Semester extends Component {
             newCourseButton = <div className="semester_summary">
                 <p onClick={this.handleOpenDialogNewCourse} className="semester_summary_new_course new_course"><FontIcon className="material-icons" style={styles.addCourse}>add</FontIcon> Add new course</p>
             </div>;
-
-
         }
         else{
             boxHeadline = <div className="box_headline"><div className="box_headline_text">{this.state.semester.semester}</div></div>;

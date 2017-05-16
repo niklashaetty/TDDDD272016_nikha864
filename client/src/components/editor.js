@@ -108,15 +108,23 @@ class CoursePlanEditor extends Component {
     // Callback so that children of CoursePlanEditor can callback for re-rendering
     // and show snackbar message.
     updateEditor = (response) => {
+
         if(response.success){
-            this.setState({snackbarMessage: response.message,
-                snackbarColor: 'white'});
+            this.setState({
+                plan: null,
+                loading: true,
+            });
             this.componentWillMount();
+            this.setState({snackbarMessage: response.message,
+                snackbarColor: 'white',
+                loading: false,
+            });
         }
 
         else{
             this.setState({snackbarMessage: response.message,
-                snackbarColor: 'red'});
+                snackbarColor: 'red',
+            });
         }
         this.handleOpenSnackbar();
     };
@@ -191,7 +199,6 @@ class CoursePlanEditor extends Component {
                 loadingAddingPlan: false
             });
         }
-
         this.handleOpenSnackbar();
     }
 
@@ -323,10 +330,7 @@ class CoursePlanEditor extends Component {
                               </div>
                           </div>
                       </div>;
-
                 }
-
-
             }
             let schedulingConflicts = CoursePlan.checkScheduleConflicts(this.state.plan);
             return (
