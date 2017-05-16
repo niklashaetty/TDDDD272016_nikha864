@@ -121,7 +121,7 @@ const tableData = [
   {
         "code": "TDDD20",
         "name": "Design and Analysis of Algorithms",
-        "block": "3",
+        "block": "1",
         "period": "HT1",
         "level": "A",
         "ects": "6"
