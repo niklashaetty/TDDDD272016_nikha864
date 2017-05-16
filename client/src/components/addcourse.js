@@ -79,61 +79,128 @@ const styles = {
 
 const tableData = [
     {
-        "ects": "6*",
-        "level": "A",
-        "name": "Testcourse 103",
-        "period": "HT1/HT2",
-        "block": "1",
-        "code": "TDDD17"
-    },
-    {
-        "ects": "6*",
-        "level": "G2",
-        "name": "Testcourse 103",
-        "period": "HT1/HT2",
-        "block": "2",
-        "code": "c2"
-    },
-    {
-        "ects": "6*",
-        "level": "G1",
-        "name": "Testcourse 103",
-        "period": "VT1",
+        "code": "TDDD97",
+        "name": "Web programming",
         "block": "3",
-        "code": "c3"
-    },
-    {
-        "ects": "6*",
-        "level": "G1",
-        "name": "Testcourse 1017",
-        "period": "VT2",
-        "block": "4",
-        "code": "c4"
-    },
-    {
-        "ects": "6*",
+        "period": "HT1",
         "level": "G2",
-        "name": "Testcourse 104",
-        "period": "HT1/HT2",
-        "block": "1/2",
-        "code": "c5"
+        "ects": "6"
     },
     {
-        "ects": "6*",
-        "level": "A",
-        "name": "Testcourse 103",
-        "period": "HT1/HT2",
-        "block": "2/3",
-        "code": "c6"
+        "code": "TGTU01",
+        "name": "Technology and Ethics",
+        "block": "1",
+        "period": "HT1",
+        "level": "G1",
+        "ects": "4"
     },
     {
-        "ects": "6*",
-        "level": "A",
-        "name": "Testcourse 103",
-        "period": "HT1/HT2",
-        "block": "3/4",
-        "code": "c7"
+        "code": "TDDD37",
+        "name": "Database Technology",
+        "block": "1",
+        "period": "VT2",
+        "level": "G2",
+        "ects": "6"
     },
+    {
+        "code": "TSIT02",
+        "name": "Computer Security",
+        "block": "2",
+        "period": "VT2",
+        "level": "G2",
+        "ects": "6"
+    },
+    {
+        "code": "TDDC17",
+        "name": "Artificial Intelligence",
+        "block": "3",
+        "period": "VT1",
+        "level": "G2",
+        "ects": "6"
+    },
+  {
+        "code": "TDDD20",
+        "name": "Design and Analysis of Algorithms",
+        "block": "3",
+        "period": "HT1",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TDDD04",
+        "name": "Software Testing",
+        "block": "2",
+        "period": "HT1",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TDDD38",
+        "name": "Advanced Programming in C++",
+        "block": "2/2",
+        "period": "VT1/VT2",
+        "level": "A",
+        "ects": "6*"
+    },
+  {
+        "code": "TDDD27",
+        "name": "Advanced Web Programming",
+        "block": "3",
+        "period": "VT2",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TDDD17",
+        "name": "Information Security, Second Course",
+        "block": "4",
+        "period": "VT1/VT2",
+        "level": "A",
+        "ects": "6*"
+    },
+  {
+        "code": "TSIT03",
+        "name": "Cryptology",
+        "block": "2",
+        "period": "HT1",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TANA21",
+        "name": "Scientific Computing",
+        "block": "3",
+        "period": "HT1",
+        "level": "G1",
+        "ects": "6"
+    },
+  {
+        "code": "TDDB84",
+        "name": "Design Patterns",
+        "block": "4",
+        "period": "HT1",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TDDC90",
+        "name": "Software Security",
+        "block": "3",
+        "period": "HT2",
+        "level": "A",
+        "ects": "6"
+    },
+  {
+        "code": "TDDD89",
+        "name": "Scientific Method",
+        "block": "3",
+        "period": "HT2",
+        "level": "A",
+        "ects": "6"
+    },
+
+
+
 ];
 
 class AddCourse extends React.Component {
@@ -209,22 +276,22 @@ class AddCourse extends React.Component {
         if(typeof filteredCourses[row] === 'undefined'){
             this.props.callbackEnableAddCourseButton(false);
             this.setState({
-            selectedCourse: null,
-        });
+                selectedCourse: null,
+            });
         }
 
         // Here we selected a row, update accordingly
         else{
             this.props.callbackEnableAddCourseButton(true);
             this.setState({
-            selectedCourse: filteredCourses[row],
-        });
+                selectedCourse: filteredCourses[row],
+            });
         }
     }
 
     /* Here a bunch of function that are called when a  button has been clicked,
-       so we change the text of the button to show the new value,
-       and close the button dropdown.
+     so we change the text of the button to show the new value,
+     and close the button dropdown.
      */
     filterBlock = (event, value) => {
         event.preventDefault();
