@@ -8,6 +8,7 @@ import configparser
 import psycopg2
 import os
 import datetime
+import json
 
 import jwt
 
@@ -169,3 +170,42 @@ def is_valid_token(jwt_encoded):
         except Exception as e:
             print(e)
             return None
+
+
+def create_course(code, name, block, period, level, ects):
+    """
+    Create a course and add it to the database
+    :param code: Course code    
+    :param name: Course name
+    :param block: Timetable group
+    :param period: Period of course i.e "HT1/HT2" or "VT2"
+    :param level: Level, "A", "G1", or "G2"
+    :param ects: Credits in ects
+    :return: Success status
+    """
+
+    conn = connect_cfg()
+    cur = conn.cursor()
+    query = 'insert into courses(code, name, block, period, level, ects) values(%s, %s, %s, %s, %s, %s)' \
+            'on conflict do nothing'
+    try:
+        cur.execute(query, (code, name, block, period, level, ects))
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+def fill_courses():
+    """
+    Help function to fill courses from a json file
+    :return: 
+    """
+    with open('courses.json') as file:
+        data = json.load(file)
+        courses = data['courses']
+        for course in courses:
+            create_course(course['code'], course['name'], course['block'], course['period'], course['level'], course['ects'])
+
+        print("Added {0} courses to the database".format(len(courses)))
+
