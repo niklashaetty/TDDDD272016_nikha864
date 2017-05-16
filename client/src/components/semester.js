@@ -42,7 +42,8 @@ class Semester extends Component {
             editMode: this.props.editMode,
             openDialogDeleteSemester: false,
             loading: false,
-            openDialogNewCourse: false
+            openDialogNewCourse: false,
+            enableCourseButton: false,
         };
     }
 
@@ -94,20 +95,27 @@ class Semester extends Component {
     };
 
     handleCloseDialogNewCourse = () => {
-        this.setState({openDialogNewCourse: false});
+        this.setState({
+            openDialogNewCourse: false,
+            enableCourseButton: false,
+        });
     };
 
+    // When a course is chosen, enable the button to add course
+    handleEnableCourseButton = (enabled) =>{
+        this.setState({
+            enableCourseButton: enabled,
+        });
+    };
 
     // Delete a semester
     async deleteSemester (){
-        console.log("init delete semester");
         this.setState({loading: true});
         this.handleCloseDialogDeleteSemester();
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("identifier", this.state.plan.plan_hash);
         payload.append("semester_name", this.state.semester.semester);
-        console.log("trying to delete: " + this.state.semester.semester + " from: " + this.state.plan.plan_hash);
         const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/delete_semester', {
             method: 'post',
             body: payload
@@ -117,8 +125,8 @@ class Semester extends Component {
 
         this.props.callback(response);
         this.setState({loading: false});
-        console.log("Done delete semester");
     };
+
 
     // Add a course to a semester
     async addCourse(){
@@ -126,6 +134,12 @@ class Semester extends Component {
         payload.append("token", Auth.getToken());
         payload.append("identifier", this.state.plan.plan_hash);
         payload.append("semester_name", this.state.semester.semester);
+        payload.append("course_code", );
+        payload.append("course_name");
+        payload.append("course_period");
+        payload.append("course_block");
+        payload.append("course_credits");
+        payload.append("course_level");
         const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/add_course', {
             method: 'post',
             body: payload
@@ -227,11 +241,11 @@ class Semester extends Component {
             />,
             <FlatButton
               label="Add course"
+              disabled={!this.state.enableCourseButton}
               primary={true}
-              onTouchTap={() => alert("Added course (only frontend support, doesnt actually do anything yet!)")}
+              onTouchTap={this.addCourse}
             />
         ];
-
         return (
           <div className={this.state.boxClassName}>
               {boxHeadline}
@@ -287,13 +301,13 @@ class Semester extends Component {
               </Dialog>
 
               <Dialog
-                title="Add a new course"
+                title={"Add a new course to " + this.state.semester.semester + "."}
                 actions={dialogActionsNewCourse}
                 modal={false}
                 open={this.state.openDialogNewCourse}
                 onRequestClose={this.handleCloseDialogNewCourse}
               >
-                  <AddCourse/>
+                  <AddCourse callbackEnableAddCourseButton={this.handleEnableCourseButton}/>
               </Dialog>
 
           </div>

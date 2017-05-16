@@ -1,5 +1,6 @@
 /**
  This component is the course chooser that appears when one tries to add a new course to a semester.
+ This whole component is rendered withing a Material UI dialog, created in the parent semester.
  */
 import React from 'react';
 
@@ -146,6 +147,7 @@ class AddCourse extends React.Component {
             selectedLevel: 'All levels',
             selectedSearch: '',
             courseTableHeight: '400px',
+            selectedCourse: null,
         };
     }
 
@@ -166,6 +168,7 @@ class AddCourse extends React.Component {
         });
     };
 
+    // Close all button if we clicked outside
     handleRequestClose = () => {
         this.setState({
             openBlock: false,
@@ -174,6 +177,33 @@ class AddCourse extends React.Component {
         });
     };
 
+    // When a row is selected (or deselected) we'll need to update selectedCourse
+    // and call parent to enable (or disable) the add course button
+    handleRowSelection (row, filteredCourses) {
+
+        // So if this is true, it means that a row was _deselected_, and we need to
+        // remove selection and call parent to disable addCourseButton in semester component.
+        // Guess this is a hack, but i didn't know how else to do it.
+        if(typeof filteredCourses[row] === 'undefined'){
+            this.props.callbackEnableAddCourseButton(false);
+            this.setState({
+            selectedCourse: null,
+        });
+        }
+
+        // Here we selected a row, update accordingly
+        else{
+            this.props.callbackEnableAddCourseButton(true);
+            this.setState({
+            selectedCourse: filteredCourses[row],
+        });
+        }
+    }
+
+    /* Here a bunch of function that are called when a  button has been clicked,
+       so we change the text of the button to show the new value,
+       and close the button dropdown.
+     */
     filterBlock = (event, value) => {
         event.preventDefault();
         this.setState({
@@ -181,7 +211,6 @@ class AddCourse extends React.Component {
             openBlock: false,
         });
     };
-
     filterPeriod = (event, value) => {
         event.preventDefault();
         this.setState({
@@ -189,7 +218,6 @@ class AddCourse extends React.Component {
             openPeriod: false,
         });
     };
-
     filterSearch = (event, value) => {
         event.preventDefault();
         this.setState({
@@ -197,7 +225,6 @@ class AddCourse extends React.Component {
 
         });
     };
-
     filterLevel = (event, value) => {
         event.preventDefault();
         this.setState({
@@ -208,8 +235,8 @@ class AddCourse extends React.Component {
 
     /* Filter all courses based on the criteria in selected* states */
     filterCourses = () => {
-        let _this = this;
 
+        let _this = this;
         // If All is selected, replace search query with empty string to not filter anything
         let periodsChosen = (_this.state.selectedPeriod === "All periods") ? "" : _this.state.selectedPeriod;
         let blocksChosen = (_this.state.selectedBlock === "All blocks") ? "" : _this.state.selectedBlock.substring(_this.state.selectedBlock.indexOf(" ")+1); // Strip "Block " from selectedBlock
@@ -316,6 +343,7 @@ class AddCourse extends React.Component {
                 height={this.state.courseTableHeight}
                 fixedHeader={false}
                 style={styles.courseTable.general}
+                onRowSelection={(row) => this.handleRowSelection(row, filteredCourses)}
               >
                   <TableHeader
                     displaySelectAll={false}
@@ -335,6 +363,7 @@ class AddCourse extends React.Component {
                   <TableBody
                     displayRowCheckbox={true}
                     showRowHover={true}
+                    deselectOnClickaway={false}
                   >
                       {filteredCourses.map( (row, index) => (
                         <TableRow className="table_row" key={index} >
@@ -349,7 +378,6 @@ class AddCourse extends React.Component {
                   </TableBody>
               </Table>
           </div>;
-
         return (
           <div>
               <div className="filter_menu">
