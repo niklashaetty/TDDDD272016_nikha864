@@ -4,6 +4,9 @@
  */
 import React from 'react';
 
+// Components
+import Auth from './auth';
+
 // CSS
 import '../css/addcourse.css';
 
@@ -131,13 +134,13 @@ const tableData = [
         "block": "3/4",
         "code": "c7"
     },
-
 ];
 
 class AddCourse extends React.Component {
 
     constructor(props) {
         super(props);
+        this.addCourse = this.addCourse.bind(this);
         this.state = {
             openBlock: false,
             openPeriod: false,
@@ -148,7 +151,26 @@ class AddCourse extends React.Component {
             selectedSearch: '',
             courseTableHeight: '400px',
             selectedCourse: null,
+            semester: this.props.semester,
+            plan: this.props.plan,
         };
+    }
+
+    // Add a course to a semester
+    async addCourse(){
+        console.log("Adding course " + this.state.selectedCourse.code + " to semester " + this.state.semester.semester + " in plan " + this.state.plan.plan_hash);
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", this.state.plan.plan_hash);
+        payload.append("semester_name", this.state.semester.semester);
+        payload.append("course", JSON.stringify(this.state.selectedCourse));
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/add_course', {
+            method: 'post',
+            body: payload
+        });
+
+        let response = await request.json();
+        this.props.callbackAddCourse(response);
     }
 
     handleOpenBlock = (event) => {
@@ -222,7 +244,6 @@ class AddCourse extends React.Component {
         event.preventDefault();
         this.setState({
             selectedSearch: value,
-
         });
     };
     filterLevel = (event, value) => {
@@ -349,7 +370,6 @@ class AddCourse extends React.Component {
                     displaySelectAll={false}
                     adjustForCheckbox={true}
                     enableSelectAll={false}
-
                   >
                       <TableRow className="table_row">
                           <TableHeaderColumn className="table_row" style={styles.courseTable.mediumColumn} tooltip="Course code">Code</TableHeaderColumn>
