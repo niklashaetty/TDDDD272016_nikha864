@@ -14,6 +14,10 @@ app = Flask(__name__)
 CORS(app)
 
 
+# Global constants:
+MAX_SEMESTERS = 4
+MAX_COURSES_PER_SEMESTER = 6
+
 @app.route("/")
 def root():
     return 'Hello world'
@@ -321,6 +325,70 @@ def add_semester():
             else:
                 return jsonify(success=False,
                                message='This plan cannot have any more semesters')
+
+        else:
+            return jsonify(success=False,
+                           message='You are not the owner of this course plan')
+
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/add_course', methods=['POST'])
+def add_course():
+    """
+    Add a course to an existing semester
+    :return: Success status
+    """
+    jwt = request.form['token']
+    identifier = request.form['identifier']
+    semester_name = request.form['semester_name']
+    course = request.form['course']
+    course = json.loads(course)
+
+    # Logic to derive periods, i.e. go from 'VT1/VT2' to a list of ['period1','period2'].
+    periods = course['period']
+    second_period = 'period'+periods[6:] if periods[6:] else None
+    periods = ['period'+periods[2:3], second_period]
+
+    # Logic to derive blocks, i.e. go from '1/2' to a list of [1,2]
+    blocks = course['block']
+    print(blocks)
+    second_block = blocks[2:] if blocks[2:] else None
+    blocks = [blocks[:1], second_block]
+    print(blocks)
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+
+        # Check that plan exists
+        if not mongodb.plan_exists(identifier):
+            return jsonify(success=False,
+                           message='Error: This plan does not exist')
+
+        # Check that semester exists
+        if not mongodb.semester_exists(identifier, semester_name):
+            return jsonify(success=False,
+                           message='Error: This such semester does not exist')
+
+        # Verify that user owns plan
+        if valid_token['username'] == mongodb.get_course_plan_owner(identifier):
+
+            if mongodb.get_course_count(identifier, semester_name) < MAX_COURSES_PER_SEMESTER:
+
+                added_course = mongodb.add_course(identifier, periods, blocks, semester_name, course)
+                if added_course:
+                    return jsonify(success=True,
+                                   message='Added course {0} to {1}.'.format(course['name'], semester_name))
+                else:
+                    return jsonify(success=False,
+                                   message='Unknown error occurred. Please try again later.')
+
+            else:
+                return jsonify(success=False,
+                               message='Error: This semester can not have any more courses.')
 
         else:
             return jsonify(success=False,
