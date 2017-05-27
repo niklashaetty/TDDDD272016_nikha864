@@ -86,6 +86,7 @@ class Dashboard extends Component {
             openDialog: false,
             username: this.props.location.state.username,
             plans: null,
+            savedPlans: null,
             loading: true,
             new_plan_name: '',
             snackbarOpen: false,
@@ -96,9 +97,16 @@ class Dashboard extends Component {
     // After the first render, start retrieving course plans from the server
     async componentDidMount(){
         let request = await this.getCoursePlans();
+        let requestSavedPlans = await Dashboard.getSavedCoursePlans();
         if (request.success){
             this.setState({
                 plans: request.course_plans,
+            })
+        }
+
+        if(requestSavedPlans.success){
+            this.setState({
+                savedPlans: requestSavedPlans.saved_plans,
                 loading: false
             })
         }
@@ -181,6 +189,17 @@ class Dashboard extends Component {
         return await request.json();
     }
 
+    // Get saved course plans given a owner (represented by a token) from the server
+    static async getSavedCoursePlans () {
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/get_saved_plans', {
+            method: 'post',
+            body: payload
+        });
+        return await request.json();
+    }
+
     // Fill a list of PlannerLink components from a list of course plans that were retrieved from the server
     fillCoursePlans(){
         let result = [];
@@ -195,6 +214,26 @@ class Dashboard extends Component {
               <div className="">
                   <Divider style={{backgroundColor: '#F2F8FA'}}/>
                   <p className="info_text"> You have no plans yet, why not create one?</p>
+              </div>;
+            result.push(noPlans);
+        }
+        return result;
+    }
+
+    // Fill a list of PlannerLink components from a list of course plans that were retrieved from the server
+    fillSavedCoursePlans(){
+        let result = [];
+        let plans = this.state.savedPlans;
+        if(plans.length > 0) {
+            for (let i = 0; i < plans.length; i++) {
+                result.push(<PlannerLink key={i} name={plans[i].name} plan_hash={plans[i].identifier}/>)
+            }
+        }
+        else {
+            let noPlans =
+              <div key={-1} className="">
+                  <Divider style={{backgroundColor: '#F2F8FA'}}/>
+                  <p className="info_text"> You have no saved plans yet!</p>
               </div>;
             result.push(noPlans);
         }
@@ -229,6 +268,7 @@ class Dashboard extends Component {
         }
         else {
             let coursePlans = this.fillCoursePlans();
+            let savedCoursePlans = this.fillSavedCoursePlans();
             return (
               <div>
                   <Header user={this.state.username}/>
@@ -273,6 +313,9 @@ class Dashboard extends Component {
                           <div className="upper_right_wrapper">
                               <div className="box_headline"> Saved course plans</div>
                               <div className="box_content">
+                                  <div className="course_plans">
+                                      {savedCoursePlans}
+                                  </div>
                               </div>
                           </div>
 

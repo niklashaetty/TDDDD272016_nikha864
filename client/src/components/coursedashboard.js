@@ -13,8 +13,9 @@ import FlatButton from 'material-ui/FlatButton';
 
 // Comp
 import Auth from './auth';
+import Dashboard from './dashboard'
 
-const styles = {
+let styles = {
     button: {
         width: 85,
         height: 35,
@@ -22,6 +23,20 @@ const styles = {
     deletebutton: {
         width: 85,
         height: 35,
+    },
+    saveButton: {
+        width: 160,
+        height: 35,
+    },
+    icon: {
+        marginLeft: 5,
+        marginTop: -2,
+        color: '#545a6a',
+    },
+    iconSaved: {
+        marginLeft: 5,
+        marginTop: -2,
+        color: '#FFD700',
     }
 };
 
@@ -29,12 +44,31 @@ class CourseDashBoard extends Component {
     constructor(props) {
         super(props);
         this.deleteCoursePlan = this.deleteCoursePlan.bind(this);
+        this.savePlan = this.savePlan.bind(this);
+        this.unSavePlan = this.unSavePlan.bind(this);
         this.state = {
             openDialog: false,
             maxAdvancedECTS: 60,
             maxECTS: 90,
-            editMode: this.props.editMode
+            editMode: this.props.editMode,
+            planSaved: false,
         };
+    }
+
+    // Before component is mounted, set status of saved plan
+    // This is used for the save plan/unsave button.
+    async componentWillMount() {
+        let planIsSaved = await this.planIsSaved();
+        if (planIsSaved) {
+            this.setState({
+                planSaved: true,
+            });
+        }
+        else{
+            this.setState({
+                planSaved: false,
+            });
+        }
     }
 
     // Handle dialog logic
@@ -45,6 +79,15 @@ class CourseDashBoard extends Component {
     handleCloseDialog = () => {
         this.setState({openDialog: false});
     };
+
+    // Workaround to change color of "Save plan" icon on hover
+    addHoverColor() {
+        styles.icon.color = '#FFD700';
+    }
+
+    removeHoverColor() {
+        styles.icon.color = '#545a6a';
+    }
 
     // Handle opening of editor
     openEditor = () => {
@@ -89,6 +132,53 @@ class CourseDashBoard extends Component {
 
         // TODO: IN CASE DELETION FAILED; FIX
 
+    };
+
+    async planIsSaved(){
+        let request = await Dashboard.getSavedCoursePlans();
+        if(request.success){
+            for(let i = 0; i < request.saved_plans.length; i++){
+                if(request.saved_plans[i].identifier === this.props.planHash){
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    // Save a plan
+    async savePlan(){
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", this.props.planHash);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/save_plan', {
+            method: 'post',
+            body: payload
+        });
+        let response = await request.json();
+        if(response.success){
+            this.setState({
+                planSaved: true,
+            });
+        }
+    };
+
+    // Remove save of a plan
+    async unSavePlan(){
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", this.props.planHash);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/unsave_plan', {
+            method: 'post',
+            body: payload
+        });
+        let response = await request.json();
+
+        if(response.success){
+            this.setState({
+                planSaved: false,
+            });
+        }
     };
 
     // Define action for the dialog buttons
@@ -153,6 +243,7 @@ class CourseDashBoard extends Component {
         // Hide edit buttons if in editor mode
         let editButton;
         let deleteButton = null;
+        let saveButton = null;
         if(this.state.editMode){
             editButton = <div className="field_sidebyside">
                 <RaisedButton
@@ -195,6 +286,45 @@ class CourseDashBoard extends Component {
                   onTouchTap={this.openEditor}
                 />
             </div>;
+
+            // If we are logged in, not in edit mode, and not the owner,
+            // we can save the plan. Add button to show this.
+            if(!this.props.allowEdit && this.props.username) {
+
+                // If course plan already is saved, show unsave button
+                if(this.state.planSaved){
+                    saveButton = <div className="field_sidebyside">
+                        <RaisedButton
+                          target="_blank"
+                          label="Plan is saved!"
+                          style={styles.saveButton}
+                          onTouchTap={this.unSavePlan}
+                          icon={<FontIcon
+                            className="material-icons"
+                            style={styles.iconSaved}>grade
+                          </FontIcon>}
+                        />
+                    </div>;
+
+                }
+                // Else we'll show button to save
+                else {
+                    saveButton = <div className="field_sidebyside">
+                        <RaisedButton
+                          target="_blank"
+                          label="Save this plan"
+                          onMouseEnter={this.addHoverColor}
+                          onMouseLeave={this.removeHoverColor}
+                          style={styles.saveButton}
+                          onTouchTap={this.savePlan}
+                          icon={<FontIcon
+                            className="material-icons"
+                            style={styles.icon}>grade
+                          </FontIcon>}
+                        />
+                    </div>;
+                }
+            }
         }
 
         return(
@@ -241,18 +371,13 @@ class CourseDashBoard extends Component {
                       <div className="field_small">
                           Created by: {this.props.owner}
                       </div>
-                      <div className="field_small">
-                          Programme: {this.props.programme}
-                      </div>
-                      <div className="field_small">
-                          Profile: {this.props.profile}
-                      </div>
 
                       <div className="field">
                       </div>
 
                       {editButton}
                       {deleteButton}
+                      {saveButton}
                   </div>
               </div>
           </div>
