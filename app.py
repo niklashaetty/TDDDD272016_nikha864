@@ -17,6 +17,7 @@ CORS(app)
 # Global constants:
 MAX_SEMESTERS = 4
 MAX_COURSES_PER_SEMESTER = 8
+MAX_SAVED_PLANS = 10
 
 
 @app.route("/")
@@ -234,6 +235,8 @@ def create_course_plan():
 
     jwt = request.form['token']
     name = request.form['name']
+    if not name:
+        name = "My course plan"
 
     # Set max plans here
     max_plans = 10
@@ -298,6 +301,96 @@ def delete_course_plan():
             return jsonify(success=False,
                            message='No such plan exists')
 
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/save_plan', methods=['POST'])
+def save_plan():
+    """
+    Add a course plan to list of saved course plans.
+    :return: Success status
+    """
+    jwt = request.form['token']
+    identifier = request.form['identifier']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        owner = valid_token['username']
+        saved_plans = models.get_saved_plans(owner)
+
+        if len(saved_plans) < MAX_SAVED_PLANS:
+            added_saved_plan = models.add_saved_plan(owner, identifier)
+
+            # Check if plan was actually saved
+            if added_saved_plan:
+                return jsonify(success=True,
+                               message='Successfully saved plan.')
+            else:
+                return jsonify(success=False,
+                               message='Error: Unknown database error, please try again later.')
+        else:
+            return jsonify(success=False,
+                           message='You may only save {0} plans'.format(MAX_SAVED_PLANS))
+
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/unsave_plan', methods=['POST'])
+def unsave_plan():
+    """
+    Remove a course plan from list of saved course plans.
+    :return: Success status
+    """
+    jwt = request.form['token']
+    identifier = request.form['identifier']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        owner = valid_token['username']
+        removed_saved_plan = models.remove_saved_plan(owner, identifier)
+
+        # Check if plan was actually removed
+        if removed_saved_plan:
+            return jsonify(success=True,
+                           message='Successfully unsaved plan.')
+        else:
+            return jsonify(success=False,
+                           message='Error: Unknown database error, please try again later.')
+
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
+@app.route('/get_saved_plans', methods=['POST'])
+def get_saved_plans():
+    """
+    Get all saved course plans from user
+    :return: Success status
+    """
+    jwt = request.form['token']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+        owner = valid_token['username']
+        saved_plans = models.get_saved_plans(owner)
+        saved_plans_with_name = []
+        for plan in saved_plans:
+            saved_plans_with_name.append({
+                'name': mongodb.get_course_plan_name(plan),
+                'identifier': plan
+            })
+
+        return jsonify(success=True,
+                       message='Successfully retrieved saved plans.',
+                       saved_plans=saved_plans_with_name)
     else:
         return jsonify(success=False,
                        message='Token is not valid')

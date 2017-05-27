@@ -201,6 +201,74 @@ def get_courses():
     return courses_json
 
 
+def get_saved_plans(username):
+    """
+    Get a list of courses from the database
+    :return: list of courses in json format.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    query = 'select saved_plans from users ' \
+            'where username=%s'
+    try:
+        cur.execute(query, (username,))
+        return cur.fetchone()[0]
+    except Exception as e:
+        print(e)
+        return None
+
+
+def add_saved_plan(username, identifier):
+    """
+    Add a plan hash to saved list of user
+    :param username: username
+    :param identifier: Unique plan identifier
+    :return: Boolean success
+    """
+    conn = connect()
+    cur = conn.cursor()
+
+    plans = get_saved_plans(username)
+    print(plans)
+    if identifier not in plans:
+        plans.append(identifier)
+        query = 'update users set saved_plans=%s ' \
+                'where username=%s'
+
+        try:
+            cur.execute(query, (plans, username))
+            return True
+        except Exception as e:
+            print(e)
+            return False
+    return False
+
+
+def remove_saved_plan(username, identifier):
+    """
+        Remove a saved plan from user list of saved plans.
+        :param username: username
+        :param identifier: Unique plan identifier
+        :return: Boolean success
+        """
+    conn = connect()
+    cur = conn.cursor()
+
+    plans = get_saved_plans(username)
+
+    if identifier in plans:
+        plans.remove(identifier)
+        query = 'update users set saved_plans=%s ' \
+                'where username=%s'
+        try:
+            cur.execute(query, (plans, username))
+            return True
+        except Exception as e:
+            print(e)
+            return False
+    return False
+
+
 def create_course(code, name, block, period, level, ects):
     """
     Create a course and add it to the database

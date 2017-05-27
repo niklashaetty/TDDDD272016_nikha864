@@ -213,6 +213,17 @@ def get_course_plan_owner(identifier):
     return plan['owner']
 
 
+def get_course_plan_name(identifier):
+    """
+    Return name of a course plan with provided hash.
+    :param identifier: Unique plan identifier
+    :return: plan name
+    """
+    collection = get_collection()
+    plan = collection.find_one({'plan_hash': identifier}, {'_id': 0, 'name': 1})
+    return plan['name']
+
+
 def get_course_plan(identifier):
     """
     Find and get a course plan with provided hash.
@@ -518,9 +529,6 @@ def update_course_credits(identifier):
     collection.update({'plan_hash': identifier},
                       {'$set': {'ects': global_ects,
                                 'advanced_ects': global_advanced_ects}})
-
-
-
 
 
 
