@@ -354,10 +354,8 @@ def add_course():
 
     # Logic to derive blocks, i.e. go from '1/2' to a list of [1,2]
     blocks = course['block']
-    print(blocks)
     second_block = blocks[2:] if blocks[2:] else None
     blocks = [blocks[:1], second_block]
-    print(blocks)
 
     # Validate token
     valid_token = models.is_valid_token(jwt)
@@ -372,6 +370,16 @@ def add_course():
         if not mongodb.semester_exists(identifier, semester_name):
             return jsonify(success=False,
                            message='Error: This such semester does not exist')
+
+        # Check that the course runs in the given period
+        if not course_runs_in_semester(course['period'], semester_name):
+            return jsonify(success=False,
+                           message='Error: This course does not run in this this semester')
+
+        # Check that course is not already in plan:
+        if mongodb.course_in_plan(identifier, semester_name, course['code']):
+            return jsonify(success=False,
+                           message='Error: This course is already in this semester')
 
         # Verify that user owns plan
         if valid_token['username'] == mongodb.get_course_plan_owner(identifier):
@@ -516,6 +524,17 @@ def generate_identifier():
         chars.append(random.choice(alphabet))
 
     return "".join(chars)
+
+
+def course_runs_in_semester(course_period, semester_name):
+    """
+    Check if a course runs in given semester.
+    Parse semester name and see if it matches with the semester of the course.
+    :param: course_period: semester and period i.e "VT1" or "VT1/VT2"
+    :return: Boolean course runs in semester
+    """
+    course_semester = course_period[:2]
+    return course_semester in semester_name
 
 
 def validate_user_data(username, plain_password):

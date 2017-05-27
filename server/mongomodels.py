@@ -190,6 +190,26 @@ def add_course(identifier, periods, blocks, semester_name, course):
         return False
 
 
+def course_in_plan(identifier, semester_name, course_code):
+    """
+    Loop through courses of a given semester to find if code is in there.
+    :param identifier: 
+    :param semester_name: 
+    :param course_code: 
+    :return: 
+    """
+    semester = get_semester(identifier, semester_name)
+
+    for c in semester['period1']:
+        if c['code'] == course_code:
+            return True
+
+    for c in semester['period2']:
+        if c['code'] == course_code:
+            return True
+    return False
+
+
 def get_course_plan_owner(identifier):
     """
     Return owner of a course plan with provided hash.
