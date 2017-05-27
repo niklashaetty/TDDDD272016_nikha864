@@ -18,6 +18,7 @@ CORS(app)
 MAX_SEMESTERS = 4
 MAX_COURSES_PER_SEMESTER = 8
 
+
 @app.route("/")
 def root():
     return 'Hello world'
@@ -163,6 +164,18 @@ def get_plan_data():
     else:
         return jsonify(success=False,
                        message='Token is not valid')
+
+
+@app.route('/get_courses', methods=['GET'])
+def get_courses():
+    """
+    Get a list of courses in the database. Each course in a tuple.
+    """
+    courses = models.get_courses()
+    if courses:
+        return jsonify(success=True,
+                       message='Successfully retrieved courses',
+                       courses=courses)
 
 
 @app.route('/get_plan', methods=['POST'])

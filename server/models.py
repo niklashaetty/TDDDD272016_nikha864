@@ -172,6 +172,35 @@ def is_valid_token(jwt_encoded):
             return None
 
 
+def get_courses():
+    """
+    Get a list of courses from the database
+    :return: list of courses in json format.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    query = 'select * from courses'
+    courses_json = []
+    try:
+        cur.execute(query)
+        courses = cur.fetchall()
+    except Exception as e:
+        print(e)
+        return None
+
+    for c in courses:
+        c_json = {
+            "code": c[0],
+            "name": c[1],
+            "block": c[2],
+            "period": c[3],
+            "level": c[4],
+            "ects": c[5]
+        }
+        courses_json.append(c_json)
+    return courses_json
+
+
 def create_course(code, name, block, period, level, ects):
     """
     Create a course and add it to the database
