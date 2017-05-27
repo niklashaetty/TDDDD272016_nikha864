@@ -4,6 +4,7 @@ drop table if exists users;
 create table users(
     username text not null unique,
     password_hash bytea not null unique,
+    saved_plans text[],
     primary key(username)
 );
 
