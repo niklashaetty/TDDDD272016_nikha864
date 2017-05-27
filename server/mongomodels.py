@@ -168,21 +168,13 @@ def add_course(identifier, periods, blocks, semester_name, course):
         old_second_period.append(new_course)
         correct_semester[periods[1]] = old_second_period
 
-    # Update credits
-    inc_advanced = 0
-    course_points = int(course['ects'][0])
-    if course['level'] == 'A':
-        correct_semester['advanced_ects'] += course_points
-        inc_advanced = course_points  # Account for course with *, i.e "6*"
-    correct_semester['ects'] += course_points
-    inc_ects = course_points
-
     # Done editing, add the edited semester back to the list of all semesters and update the db.
     semesters.insert(old_index, correct_semester)
     try:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters},
-                           '$inc': {'ects': inc_ects, 'advanced_ects': inc_advanced}})
+                          {'$set': {'semesters': semesters}})
+        update_schedule_conflicts(identifier)
+        update_course_credits(identifier)
         return True
 
     except Exception as e:
@@ -348,40 +340,19 @@ def delete_semester(identifier, semester_name):
     collection = get_collection()
     semesters = get_semesters(identifier)
     removed = False
-    correct_semester = None
 
     # Find and delete correct semester
     for s in semesters:
         if s['semester'] == semester_name:
-            correct_semester = s
             semesters.remove(s)
             removed = True
             break
 
-    # Remove credits from plan:
-    ects_to_remove = 0
-    advanced_ects_to_remove = 0
-
-    #   period 1
-    for c in correct_semester['period1']:
-        points = int(c['points'][0])  # to acount for *, i.e "6*"
-        ects_to_remove -= points
-        if c['level'] == 'A':
-            advanced_ects_to_remove -= points
-    #   period 2
-    for c in correct_semester['period2']:
-        if not len(c['points']) > 1:  # if this were true, it would be a star course, i.e points would already be added
-            points = int(c['points'])
-            ects_to_remove -= points
-            if c['level'] == 'A':
-                advanced_ects_to_remove -= points
-
     if removed:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters},
-                           '$inc': {'ects': ects_to_remove,
-                                    'advanced_ects': advanced_ects_to_remove}
-                           })
+                          {'$set': {'semesters': semesters}})
+        update_schedule_conflicts(identifier)
+        update_course_credits(identifier)
         return True
 
     else:
@@ -422,32 +393,17 @@ def delete_course(identifier, semester_name, course_code):
     second_period = correct_semester['period2']
 
     # Check if course exist in period, if so delete
-    # Also, check if we need to remove credits.
-    removed_advanced = 0
-    removed_ects = 0
 
     for course in first_period:
         if course['code'] == course_code:
-            course_points = int(course['points'][0])  # to account for points with star, i.e '6*'
             first_period.remove(course)
             course_deleted = True
-            if course['level'] == 'A':
-                removed_advanced = course_points * -1
-            removed_ects = course_points * -1
             break
 
     for course in second_period:
         if course['code'] == course_code:
-            course_points = int(course['points'][0])  # to account for points with star, i.e '6*'
             second_period.remove(course)
             course_deleted = True
-            print("found course in p2")
-
-            # For the second period, if we already deleted course once, we don't need to change the ects val to update
-            if not (removed_advanced+removed_ects == 0):
-                if course['level'] == 'A':
-                    removed_advanced = course_points * -1
-                removed_ects = course_points * -1
             break
 
     # Add periods back to semester
@@ -457,17 +413,115 @@ def delete_course(identifier, semester_name, course_code):
     # Add semester back to list of semesters
     semesters.insert(old_index, correct_semester)
 
-    # Update semester credits
-    correct_semester['ects'] += removed_ects
-    correct_semester['advanced_ects'] += removed_advanced
-
     # Add it all to the database again.
     try:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters},
-                          '$inc': {'ects': removed_ects, 'advanced_ects': removed_advanced}})  # Remove cred from total
+                          {'$set': {'semesters': semesters}})
+        update_schedule_conflicts(identifier)
+        update_course_credits(identifier)
         return course_deleted
 
     except Exception as e:
         print(e)
         return False
+
+
+def update_schedule_conflicts(identifier):
+    """
+    This brilliant (patent pending) code updates schedule conflicts in the entire plan.
+    It does this by looping through each semester to look for conflicts, and updates the document to reflect the
+    new status.
+    """
+    collection = get_collection()
+    semesters = get_semesters(identifier)
+
+    global_conflict = False
+    index = 0
+    for s in semesters:
+        blockp1 = [0, 0, 0, 0]
+        blockp2 = [0, 0, 0, 0]
+        semester_conflict = False
+
+        # Check period 1
+        for c in s['period1']:
+            blockp1[int(c['block'])-1] += 1
+        if any(b > 1 for b in blockp1):  # !conflict!
+            semester_conflict = True
+            global_conflict = True
+
+        # Check period 2
+        for c in s['period2']:
+            blockp2[int(c['block'])-1] += 1
+        if any(b > 1 for b in blockp2):  # !conflict!
+            semester_conflict = True
+            global_conflict = True
+
+        # If given semester contains conflicts, update status here
+        nestled_str = 'semesters.' + str(index) + '.schedule_conflict'  # something like 'semesters.0.schedule_conflict'
+        collection.update({'plan_hash': identifier},
+                          {'$set': {nestled_str: semester_conflict}})
+        index += 1
+
+    # Set global conflict
+    collection.update({'plan_hash': identifier},
+                      {'$set': {'schedule_conflict': global_conflict}})
+
+
+def update_course_credits(identifier):
+    """
+    This piece of art updates course credits in the entire plan.
+    It does this by looping through each semester to add credits, then setting the correct value both globally and
+    in each semester.
+    """
+
+    collection = get_collection()
+    semesters = get_semesters(identifier)
+
+    global_ects = 0
+    global_advanced_ects = 0
+    index = 0
+    for s in semesters:
+        semester_ects = 0
+        semester_advanced_ects = 0
+
+        # Count period 1
+        for c in s['period1']:
+            course_ects = int(c['points'][0])
+            semester_ects += course_ects
+            if c['level'] == 'A':
+                semester_advanced_ects += course_ects
+
+        # Count period 2
+        for c in s['period2']:
+
+            # If star, "6*", course has already been counted since it runs through both periods. We skip these here.
+            if not len(c['points']) > 1:
+                course_ects = int(c['points'][0])
+                semester_ects += course_ects
+                if c['level'] == 'A':
+                    semester_advanced_ects += course_ects
+
+        # Update semester credits
+        nestled_ects = 'semesters.' + str(index) + '.ects'  # something like 'semesters.0.ects'
+        nestled_advanced_ects = 'semesters.' + str(index) + '.advanced_ects'
+        collection.update({'plan_hash': identifier},
+                          {'$set': {nestled_ects: semester_ects,
+                                    nestled_advanced_ects: semester_advanced_ects}})
+
+        # Add semester credits to global
+        global_ects += semester_ects
+        global_advanced_ects += semester_advanced_ects
+
+        index += 1
+
+    # Set global credits
+    collection.update({'plan_hash': identifier},
+                      {'$set': {'ects': global_ects,
+                                'advanced_ects': global_advanced_ects}})
+
+
+
+
+
+
+
