@@ -2,7 +2,6 @@
  * Created by iinh on 4/19/17.
  */
 import React, {Component} from 'react';
-import {browserHistory} from 'react-router';
 
 // Material UI
 import CircularProgress from 'material-ui/CircularProgress';
@@ -294,6 +293,9 @@ class CoursePlanEditor extends Component {
 
                     case 3:
                         boxClassName = 'lower_right_wrapper';
+                        break;
+
+                    default:
                         break;
                 }
 

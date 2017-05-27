@@ -9,7 +9,6 @@ import '../css/semester.css';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 // Components
 import Auth from './auth';

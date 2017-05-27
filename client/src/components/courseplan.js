@@ -2,11 +2,9 @@
  * This module contains the course plan parent that ties a courseplan together.
  */
 import React, {Component} from 'react';
-import {browserHistory} from 'react-router';
 
 // Material UI
 import CircularProgress from 'material-ui/CircularProgress';
-import Snackbar from 'material-ui/Snackbar';
 
 // CSS
 import '../css/contentboxes.css';

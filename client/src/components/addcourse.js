@@ -16,11 +16,9 @@ import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
-import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import {
     Table,
     TableBody,
-    TableFooter,
     TableHeader,
     TableHeaderColumn,
     TableRow,
