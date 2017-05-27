@@ -179,7 +179,7 @@ class Semester extends Component {
                 deleteButton = <FontIcon onClick={() => this.removeCourse(obj.code)} className="material-icons"
                                          style={styles.deleteIcon}>clear</FontIcon>;
             }
-            row = <tr>
+            row = <tr key={obj.code}>
                 <td>{obj.block}</td>
                 <td>{obj.code}</td>
                 <td>{obj.name}</td>
@@ -198,7 +198,7 @@ class Semester extends Component {
                 deleteButton = <FontIcon onClick={() => this.removeCourse(obj.code)} className="material-icons"
                                          style={styles.deleteIcon}>clear</FontIcon>;
             }
-            row = <tr>
+            row = <tr key={obj.code}>
                 <td>{obj.block}</td>
                 <td>{obj.code}</td>
                 <td>{obj.name}</td>
@@ -322,7 +322,9 @@ class Semester extends Component {
                 open={this.state.openDialogNewCourse}
                 onRequestClose={this.handleCloseDialogNewCourse}
               >
-                  <AddCourse ref="addCourse" callbackAddCourse={this.callbackAddCourse} semester={this.state.semester} plan={this.state.plan} callbackEnableAddCourseButton={this.handleEnableCourseButton}/>
+                  <AddCourse ref="addCourse" callbackAddCourse={this.callbackAddCourse} semester={this.state.semester}
+                             plan={this.state.plan} callbackEnableAddCourseButton={this.handleEnableCourseButton}
+                             courseList={this.props.courseList}/>
               </Dialog>
 
           </div>

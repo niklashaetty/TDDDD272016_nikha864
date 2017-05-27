@@ -187,7 +187,7 @@ class Dashboard extends Component {
         let plans = this.state.plans;
         if(plans.length > 0) {
             for (let i = 0; i < plans.length; i++) {
-                result.push(<PlannerLink name={plans[i].name} plan_hash={plans[i].plan_hash}/>)
+                result.push(<PlannerLink key={i} name={plans[i].name} plan_hash={plans[i].plan_hash}/>)
             }
         }
         else {

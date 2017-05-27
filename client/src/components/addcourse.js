@@ -77,138 +77,6 @@ const styles = {
     }
 };
 
-const tableData = [
-    {
-        "code": "TDDD97",
-        "name": "Web programming",
-        "block": "3",
-        "period": "HT1",
-        "level": "G2",
-        "ects": "6"
-    },
-    {
-        "code": "TGTU01",
-        "name": "Technology and Ethics",
-        "block": "1",
-        "period": "HT1",
-        "level": "G1",
-        "ects": "6"
-    },
-    {
-        "code": "TDDD37",
-        "name": "Database Technology",
-        "block": "1",
-        "period": "VT2",
-        "level": "G2",
-        "ects": "6"
-    },
-    {
-        "code": "TSIT02",
-        "name": "Computer Security",
-        "block": "2",
-        "period": "VT2",
-        "level": "G2",
-        "ects": "6"
-    },
-    {
-        "code": "TDDC17",
-        "name": "Artificial Intelligence",
-        "block": "3",
-        "period": "VT1",
-        "level": "G2",
-        "ects": "6"
-    },
-  {
-        "code": "TDDD20",
-        "name": "Design and Analysis of Algorithms",
-        "block": "1",
-        "period": "HT1",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TDDD04",
-        "name": "Software Testing",
-        "block": "2",
-        "period": "HT1",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TDDD38",
-        "name": "Advanced Programming in C++",
-        "block": "2/2",
-        "period": "VT1/VT2",
-        "level": "A",
-        "ects": "6*"
-    },
-  {
-        "code": "TDDD27",
-        "name": "Advanced Web Programming",
-        "block": "3",
-        "period": "VT2",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TDDD17",
-        "name": "Information Security, Second Course",
-        "block": "4/4",
-        "period": "VT1/VT2",
-        "level": "A",
-        "ects": "6*"
-    },
-  {
-        "code": "TSIT03",
-        "name": "Cryptology",
-        "block": "2",
-        "period": "HT1",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TANA21",
-        "name": "Scientific Computing",
-        "block": "3",
-        "period": "HT1",
-        "level": "G1",
-        "ects": "6"
-    },
-  {
-        "code": "TDDB84",
-        "name": "Design Patterns",
-        "block": "4",
-        "period": "HT1",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TDDC90",
-        "name": "Software Security",
-        "block": "1",
-        "period": "HT2",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TDDD89",
-        "name": "Scientific Method",
-        "block": "3",
-        "period": "HT2",
-        "level": "A",
-        "ects": "6"
-    },
-  {
-        "code": "TEST",
-        "name": "Scientific TEEST",
-        "block": "3",
-        "period": "HT2",
-        "level": "A",
-        "ects": "6"
-    },
-
-];
-
 class AddCourse extends React.Component {
 
     constructor(props) {
@@ -226,12 +94,12 @@ class AddCourse extends React.Component {
             selectedCourse: null,
             semester: this.props.semester,
             plan: this.props.plan,
+            courseList: this.props.courseList,
         };
     }
 
-    // Add a course to a semester
+// Add a course to a semester
     async addCourse(){
-        console.log("Adding course " + this.state.selectedCourse.code + " to semester " + this.state.semester.semester + " in plan " + this.state.plan.plan_hash);
         let payload = new FormData();
         payload.append("token", Auth.getToken());
         payload.append("identifier", this.state.plan.plan_hash);
@@ -263,7 +131,7 @@ class AddCourse extends React.Component {
         });
     };
 
-    // Close all button if we clicked outside
+// Close all button if we clicked outside
     handleRequestClose = () => {
         this.setState({
             openBlock: false,
@@ -272,8 +140,8 @@ class AddCourse extends React.Component {
         });
     };
 
-    // When a row is selected (or deselected) we'll need to update selectedCourse
-    // and call parent to enable (or disable) the add course button
+// When a row is selected (or deselected) we'll need to update selectedCourse
+// and call parent to enable (or disable) the add course button
     handleRowSelection (row, filteredCourses) {
 
         // So if this is true, it means that a row was _deselected_, and we need to
@@ -336,7 +204,7 @@ class AddCourse extends React.Component {
         let blocksChosen = (_this.state.selectedBlock === "All blocks") ? "" : _this.state.selectedBlock.substring(_this.state.selectedBlock.indexOf(" ")+1); // Strip "Block " from selectedBlock
         let levelsChosen = (_this.state.selectedLevel === "All levels") ? "" : _this.state.selectedLevel;
         let textChosen =  _this.state.selectedSearch.toLowerCase();
-        return tableData.filter(function(course){
+        return _this.state.courseList.filter(function(course){
             let courseCode = course.code.toLowerCase();
             let courseName = course.name.toLowerCase();
             return (
