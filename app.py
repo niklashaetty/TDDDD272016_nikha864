@@ -16,7 +16,7 @@ CORS(app)
 
 # Global constants:
 MAX_SEMESTERS = 4
-MAX_COURSES_PER_SEMESTER = 6
+MAX_COURSES_PER_SEMESTER = 8
 
 @app.route("/")
 def root():
