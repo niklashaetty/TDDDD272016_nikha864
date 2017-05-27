@@ -92,7 +92,7 @@ const tableData = [
         "block": "1",
         "period": "HT1",
         "level": "G1",
-        "ects": "4"
+        "ects": "6"
     },
     {
         "code": "TDDD37",
@@ -153,7 +153,7 @@ const tableData = [
   {
         "code": "TDDD17",
         "name": "Information Security, Second Course",
-        "block": "4",
+        "block": "4/4",
         "period": "VT1/VT2",
         "level": "A",
         "ects": "6*"
