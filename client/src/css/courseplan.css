@@ -24,9 +24,12 @@
 .table_small{
   width: 40px;
 }
+.table_smallest{
+  width: 15px;
+}
 
 .semester_table{
-  height: 220px;
+  height: 237px;
 }
 .semester_summary{
   width: 100%;

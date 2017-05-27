@@ -9,7 +9,6 @@ import '../css/semester.css';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import CircularProgress from 'material-ui/CircularProgress';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 // Components
@@ -20,6 +19,7 @@ const styles = {
     deleteIcon: {
         fontSize: 15,
         color: 'red',
+        cursor: 'pointer',
     },
     addCourse: {
         fontSize: 19,
@@ -44,6 +44,7 @@ class Semester extends Component {
             loading: false,
             openDialogNewCourse: false,
             enableCourseButton: false,
+            editHidden: 'block',
         };
     }
 
@@ -69,11 +70,12 @@ class Semester extends Component {
             default:
                 boxClassName = 'upper_left_wrapper';
         }
+
         this.setState({
             boxClassName: boxClassName,
             semester: this.props.semester,
             scheduleConflict: this.props.scheduleConflict,
-            plan: this.props.plan
+            plan: this.props.plan,
         });
     }
 
@@ -125,6 +127,24 @@ class Semester extends Component {
         this.props.callback(response);
     };
 
+    // Delete a semester
+    async removeCourse (courseName){
+        console.log("Trying to remove course: ", courseName, " from semester: ", this.state.semester.semester);
+        let payload = new FormData();
+        payload.append("token", Auth.getToken());
+        payload.append("identifier", this.state.plan.plan_hash);
+        payload.append("semester_name", this.state.semester.semester);
+        payload.append("course_code", courseName);
+        const request = await fetch('https://tddd27-nikha864-backend.herokuapp.com/delete_course', {
+            method: 'post',
+            body: payload
+        });
+
+        let response = await request.json();
+        console.log(response);
+        this.props.callback(response);
+    };
+
     // Middle-man callback from child AddCourse. Callback to parent CourseEditor
     callbackAddCourse = (response) => {
         this.handleCloseDialogNewCourse();
@@ -141,6 +161,8 @@ class Semester extends Component {
             <td>Name</td>
             <td className="table_small">ECTS</td>
             <td className="table_small">Level</td>
+            <td className="table_smallest"> </td>
+
         </tr>
         <tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
         <tr className="table_header">
@@ -149,29 +171,43 @@ class Semester extends Component {
         </thead>;
 
         let row;
+        let deleteButton = null;
         // Period 1
         let period1Rows = this.props.semester.period1.map(function(obj){
+
+            if(this.state.editMode) {
+                deleteButton = <FontIcon onClick={() => this.removeCourse(obj.code)} className="material-icons"
+                                         style={styles.deleteIcon}>clear</FontIcon>;
+            }
             row = <tr>
                 <td>{obj.block}</td>
                 <td>{obj.code}</td>
                 <td>{obj.name}</td>
                 <td>{obj.points}</td>
                 <td>{obj.level}</td>
+                <td>{deleteButton}</td>
+
             </tr>;
             return row;
-        });
+        }, this);
 
         // Period 2
         let period2Rows = this.props.semester.period2.map(function(obj){
+
+            if(this.state.editMode) {
+                deleteButton = <FontIcon onClick={() => this.removeCourse(obj.code)} className="material-icons"
+                                         style={styles.deleteIcon}>clear</FontIcon>;
+            }
             row = <tr>
                 <td>{obj.block}</td>
                 <td>{obj.code}</td>
                 <td>{obj.name}</td>
                 <td>{obj.points}</td>
                 <td>{obj.level}</td>
+                <td>{deleteButton}</td>
             </tr>;
             return row;
-        });
+        }, this);
 
         // ScheduleConflict warning
         const warningIcon = <FontIcon className="material-icons" style={{
@@ -252,8 +288,7 @@ class Semester extends Component {
 
                   </div>
                   {newCourseButton}
-                  <div className="semester_summary">
-                  </div>
+
                   <div className="semester_summary">
                       <p className="semester_summary_ects">Total ECTS points: {this.state.semester.ects}</p>
                   </div>

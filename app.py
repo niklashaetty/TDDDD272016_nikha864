@@ -399,10 +399,52 @@ def add_course():
                        message='Token is not valid')
 
 
+@app.route('/delete_course', methods=['POST'])
+def delete_course():
+    """
+    Delete a course from a given semester
+    :return: Success status
+    """
+    jwt = request.form['token']
+    identifier = request.form['identifier']
+    semester_name = request.form['semester_name']
+    course_code = request.form['course_code']
+
+    # Validate token
+    valid_token = models.is_valid_token(jwt)
+    if valid_token:
+
+        # Check that plan exists
+        if not mongodb.plan_exists(identifier):
+            return jsonify(success=False,
+                           message='No such plan exists')
+
+        # Verify that user owns plan
+        if valid_token['username'] == mongodb.get_course_plan_owner(identifier):
+            deleted_course = mongodb.delete_course(identifier, semester_name, course_code)
+
+            # Check if a course was actually deleted
+            if deleted_course:
+                return jsonify(success=True,
+                               message='Course successfully removed')
+
+            else:
+                return jsonify(success=False,
+                               message='Unknown error, no course was deleted. Please try again.')
+
+        else:
+            return jsonify(success=False,
+                           message='You are not the owner of this course plan')
+
+    else:
+        return jsonify(success=False,
+                       message='Token is not valid')
+
+
 @app.route('/delete_semester', methods=['POST'])
 def delete_semester():
     """
-    Delete from a given course plan
+    Delete a semester from a given course plan
     :return: Success status
     """
     jwt = request.form['token']

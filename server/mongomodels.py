@@ -333,3 +333,69 @@ def delete_semester(identifier, semester_name):
 
     else:
         return False
+
+
+def delete_course(identifier, semester_name, course_code):
+    """
+    Delete a course from a given semester
+    :param identifier: identifier of a plan
+    :param semester_name: name of semester, unique for this plan.
+    :param course_code: course code, i.e TDDD37
+    :return: Boolean success.             
+    """
+
+    collection = get_collection()
+    semesters = get_semesters(identifier)
+
+    # Look for correct semester, temporarily remove from list.
+    # Save index so we can put the semester back in the same place
+    # Duplicate code from get_semester() to avoid another database call (this should be faster, but uglier)
+    correct_semester = None
+    old_index = 0
+    for s in semesters:
+        if s['semester'] == semester_name:
+            correct_semester = s
+            semesters.remove(s)
+            break
+        old_index += 1
+
+    # Not found, should never happen though since backend already checked.
+    if not correct_semester:
+        return False
+
+    # Pick out periods
+    course_deleted = False
+    first_period = correct_semester['period1']
+    second_period = correct_semester['period2']
+
+    # Check if course exist in period, if so delete
+    for course in first_period:
+        if course['code'] == course_code:
+            first_period.remove(course)
+            course_deleted = True
+            print("found course in p1")
+            break
+
+    for course in second_period:
+        if course['code'] == course_code:
+            second_period.remove(course)
+            course_deleted = True
+            print("found course in p2")
+            break
+
+    # Add periods back to semester
+    correct_semester['period1'] = first_period
+    correct_semester['period2'] = second_period
+
+    # Add semester back to list of semesters
+    semesters.insert(old_index, correct_semester)
+
+    # Add it all to the database again.
+    try:
+        collection.update({'plan_hash': identifier},
+                          {'$set': {'semesters': semesters}})
+        return course_deleted
+
+    except Exception as e:
+        print(e)
+        return False
