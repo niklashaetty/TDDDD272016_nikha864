@@ -185,7 +185,7 @@ const tableData = [
   {
         "code": "TDDC90",
         "name": "Software Security",
-        "block": "3",
+        "block": "1",
         "period": "HT2",
         "level": "A",
         "ects": "6"
@@ -198,8 +198,14 @@ const tableData = [
         "level": "A",
         "ects": "6"
     },
-
-
+  {
+        "code": "TEST",
+        "name": "Scientific TEEST",
+        "block": "3",
+        "period": "HT2",
+        "level": "A",
+        "ects": "6"
+    },
 
 ];
 
