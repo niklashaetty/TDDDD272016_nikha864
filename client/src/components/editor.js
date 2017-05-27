@@ -133,6 +133,8 @@ class CoursePlanEditor extends Component {
      that is used for feedback from adding a semester
      */
     handleOpenSnackbar = () => {
+        console.log("opening snackbar");
+        console.log(this.state.snackBarMessage);
         this.setState({
             snackbarOpen: true,
         });
@@ -275,7 +277,7 @@ class CoursePlanEditor extends Component {
         // all ok, render plan in editor mode.
         else {
 
-            let semesterBoxes = this.fillSemesters(this.state.plan);
+            let semesterBoxes = this.fillSemesters();
             let addNewSemesterButton = null;
 
             if(semesterBoxes.length <= this.state.maxAllowedSemesters-1){

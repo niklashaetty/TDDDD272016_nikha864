@@ -11,6 +11,9 @@ import logo from '../img/logo.svg';
 import '../css/header.css';
 import FontAwesome from 'react-fontawesome';
 
+// Material UI
+import FontIcon from 'material-ui/FontIcon';
+
 class Header extends Component {
     render() {
         let display = null;
@@ -21,18 +24,18 @@ class Header extends Component {
               <div className="menu_right">
                   <p className="menu_item">
                       <Link to={{pathname: '/dashboard', state: {username: this.props.user}}}>
-                          <FontAwesome name="user-o"/> {this.props.user}
+                          <FontAwesome name="home"/> {this.props.user}
                       </Link>
                   </p>
               </div>;
 
         }
         else{
-          display =
+            display =
               <div className="menu_right">
                   <p className="menu_item">
                       <Link to={{pathname: '/'}}>
-                          <FontAwesome name="user-o"/> Login
+                          <FontAwesome name="home"/> Login
                       </Link>
                   </p>
               </div>;

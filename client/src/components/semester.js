@@ -126,7 +126,7 @@ class Semester extends Component {
         this.props.callback(response);
     };
 
-    // Delete a semester
+    // Remove a course from a plan
     async removeCourse (courseName){
         console.log("Trying to remove course: ", courseName, " from semester: ", this.state.semester.semester);
         let payload = new FormData();
@@ -140,7 +140,6 @@ class Semester extends Component {
         });
 
         let response = await request.json();
-        console.log(response);
         this.props.callback(response);
     };
 
