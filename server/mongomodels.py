@@ -168,11 +168,21 @@ def add_course(identifier, periods, blocks, semester_name, course):
         old_second_period.append(new_course)
         correct_semester[periods[1]] = old_second_period
 
+    # Update credits
+    inc_advanced = 0
+    course_points = int(course['ects'][0])
+    if course['level'] == 'A':
+        correct_semester['advanced_ects'] += course_points
+        inc_advanced = course_points  # Account for course with *, i.e "6*"
+    correct_semester['ects'] += course_points
+    inc_ects = course_points
+
     # Done editing, add the edited semester back to the list of all semesters and update the db.
     semesters.insert(old_index, correct_semester)
     try:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters}})
+                          {'$set': {'semesters': semesters},
+                           '$inc': {'ects': inc_ects, 'advanced_ects': inc_advanced}})
         return True
 
     except Exception as e:
@@ -318,17 +328,40 @@ def delete_semester(identifier, semester_name):
     collection = get_collection()
     semesters = get_semesters(identifier)
     removed = False
+    correct_semester = None
 
+    # Find and delete correct semester
     for s in semesters:
-
         if s['semester'] == semester_name:
+            correct_semester = s
             semesters.remove(s)
             removed = True
             break
 
+    # Remove credits from plan:
+    ects_to_remove = 0
+    advanced_ects_to_remove = 0
+
+    #   period 1
+    for c in correct_semester['period1']:
+        points = int(c['points'][0])  # to acount for *, i.e "6*"
+        ects_to_remove -= points
+        if c['level'] == 'A':
+            advanced_ects_to_remove -= points
+    #   period 2
+    for c in correct_semester['period2']:
+        if not len(c['points']) > 1:  # if this were true, it would be a star course, i.e points would already be added
+            points = int(c['points'])
+            ects_to_remove -= points
+            if c['level'] == 'A':
+                advanced_ects_to_remove -= points
+
     if removed:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters}})
+                          {'$set': {'semesters': semesters},
+                           '$inc': {'ects': ects_to_remove,
+                                    'advanced_ects': advanced_ects_to_remove}
+                           })
         return True
 
     else:
@@ -369,18 +402,32 @@ def delete_course(identifier, semester_name, course_code):
     second_period = correct_semester['period2']
 
     # Check if course exist in period, if so delete
+    # Also, check if we need to remove credits.
+    removed_advanced = 0
+    removed_ects = 0
+
     for course in first_period:
         if course['code'] == course_code:
+            course_points = int(course['points'][0])  # to account for points with star, i.e '6*'
             first_period.remove(course)
             course_deleted = True
-            print("found course in p1")
+            if course['level'] == 'A':
+                removed_advanced = course_points * -1
+            removed_ects = course_points * -1
             break
 
     for course in second_period:
         if course['code'] == course_code:
+            course_points = int(course['points'][0])  # to account for points with star, i.e '6*'
             second_period.remove(course)
             course_deleted = True
             print("found course in p2")
+
+            # For the second period, if we already deleted course once, we don't need to change the ects val to update
+            if not (removed_advanced+removed_ects == 0):
+                if course['level'] == 'A':
+                    removed_advanced = course_points * -1
+                removed_ects = course_points * -1
             break
 
     # Add periods back to semester
@@ -390,10 +437,15 @@ def delete_course(identifier, semester_name, course_code):
     # Add semester back to list of semesters
     semesters.insert(old_index, correct_semester)
 
+    # Update semester credits
+    correct_semester['ects'] += removed_ects
+    correct_semester['advanced_ects'] += removed_advanced
+
     # Add it all to the database again.
     try:
         collection.update({'plan_hash': identifier},
-                          {'$set': {'semesters': semesters}})
+                          {'$set': {'semesters': semesters},
+                          '$inc': {'ects': removed_ects, 'advanced_ects': removed_advanced}})  # Remove cred from total
         return course_deleted
 
     except Exception as e:
