@@ -383,10 +383,15 @@ def get_saved_plans():
         saved_plans = models.get_saved_plans(owner)
         saved_plans_with_name = []
         for plan in saved_plans:
-            saved_plans_with_name.append({
-                'name': mongodb.get_course_plan_name(plan),
-                'identifier': plan
-            })
+            if mongodb.plan_exists(plan):
+                saved_plans_with_name.append({
+                    'name': mongodb.get_course_plan_name(plan),
+                    'identifier': plan
+                })
+
+            # Plan has been removed, un-save it.
+            else:
+                models.remove_saved_plan(owner, plan)
 
         return jsonify(success=True,
                        message='Successfully retrieved saved plans.',
