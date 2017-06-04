@@ -1,5 +1,3 @@
-
-------PLANS
 {
     "_id": {
         "$oid": "58efccf64fd3ca632c43effc"
@@ -170,27 +168,5 @@
     "name": "testname",
     "owner": "testowner"
 }
-
-
-------COURSES
-{
-    "_id" : 1,
-    "code": "TDDD01",
-    "name": "Testcourse 1",
-    "periods" : ["HT1", "HT2"],
-    "hp": 6,
-    "blocks": [2,4],
-    "level": "A"
-}
-
------USERS
-
-{
-    "_id" : 1,
-    "username": "niklas",
-    "password_hash": "hjkdsjfhkhjskdfjhksdkjhfjkhfsd"
-}
-
-
 
 
