@@ -5,7 +5,7 @@ Master course planner is a web application that lets you create you own course p
 The idea is that you should be able to share your plan as a simple link, i.e https://tddd27-nikha864.herokuapp.com/p/ENMSplv9.
 
 ## Screencast
-This project is presented a screncast.
+This project is presented in a screncast.
 [Screencast link](https://www.youtube.com/watch?v=TLbFT7NlZ5U)
 
 ## Deployment
