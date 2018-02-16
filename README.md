@@ -9,7 +9,7 @@ This project is presented in a screncast.
 [Screencast link](https://www.youtube.com/watch?v=TLbFT7NlZ5U)
 
 ## Deployment
-This project is deployed on the web using Heroku.
+This project is deployed on the web using Heroku. The deployment goes into sleepmode after inactivity, so please allow for a few seconds of loading initially.
 [Click here to get to up-to-date deployment](https://tddd27-nikha864.herokuapp.com/)
 
 ## Project identity
