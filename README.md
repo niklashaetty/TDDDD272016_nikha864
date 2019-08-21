@@ -20,7 +20,7 @@ Niklas Hätty - nikha864@student.liu.se
 * User-friendly visualization of plans.
 * Save, edit, remove course plans
 * User account with saved, favourite plans
-* Feedback on plans, i.e. scheduling conflicts, missing ECTS points etc.
+* Feedback on plans, i.e. scheduling conflicts, missing ECTS points etc. 
 
 
 ## Built with
